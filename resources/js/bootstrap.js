@@ -7,6 +7,8 @@ import $ from 'jquery';
 window.$ = $;
 
 import 'flowbite';
+import {Modal} from 'flowbite';
+window.Modal = Modal;
 
 // import { DataTable } from 'simple-datatables';
 // window.DataTable = DataTable;
@@ -20,3 +22,11 @@ window.DataTable = DataTable;
 
 import Swal from 'sweetalert2';
 window.Swal = Swal;
+
+window.customSwal = Swal.mixin({
+    customClass: {
+        popup: 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200',
+        title: 'text-lg',
+        text: 'text-md'
+    }
+});

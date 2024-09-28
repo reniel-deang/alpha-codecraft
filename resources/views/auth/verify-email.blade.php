@@ -1,14 +1,14 @@
 <x-guest-layout>
-    <section>
+    <section class="bg-gray-50 dark:bg-gray-900">
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:min-h-screen lg:py-0">
             <a href="/" class="flex items-center mb-6 text-4xl font-semibold">
-                <x-application-logo class="w-14 h-14" />
+                <x-application-logo class="w-14 h-14 text-black dark:text-slate-400" />
                 <div class="leading-tight tracking-tight font-bold">
                     <span class="text-gray-800 dark:text-gray-300">CODE</span>
                     <span class="text-pink-300">CRAFT</span>
                 </div>
             </a>
-            <div class="w-full rounded-lg dark:border md:mt-0 sm:max-w-xl xl:p-0">
+            <div class="w-full rounded-lg dark:border md:mt-0 sm:max-w-xl xl:p-0 text-gray-900 dark:text-white">
                 <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
                     <h1 class="text-xl font-bold leading-tight tracking-tight md:text-2xl">
                         Verify Email
@@ -20,7 +20,7 @@
                         we will gladly send you another.
                     </p>
                     @if (session('status') == 'verification-link-sent')
-                        <div class="mb-4 font-medium text-sm text-success" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)">
+                        <div class="mb-4 font-medium text-sm text-green-500" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)">
                             A new verification link has been sent to the email address you provided during registration.
                         </div>
                     @endif

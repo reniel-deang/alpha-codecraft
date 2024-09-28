@@ -13,7 +13,17 @@ return new class extends Migration
     {
         Schema::create('classrooms', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('teacher_id')->references('id')->on('users')->constrained()->cascadeOnDelete();;
             $table->string('name');
+            $table->string('subject');
+            $table->text('description')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('enrollments', function (Blueprint $table) {
+            $table->id();
+            $table->foreignIdFor(\App\Models\Classroom::class)->constrained()->cascadeOnDelete();
+            $table->foreignId('student_id')->references('id')->on('users')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -24,5 +34,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('classrooms');
+        Schema::dropIfExists('enrollments');
     }
 };

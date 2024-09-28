@@ -12,12 +12,12 @@
                         <p class="text-gray-400">Certificates</p>
                     </div>
                     <div>
-                        <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">89</p>
+                        <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">89h</p>
                         <p class="text-gray-400">Talktime</p>
                     </div>
                 </div>
                 <div class="relative">
-                    <img src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/michael-gough.png"
+                    <img src="{{ asset('storage/users-avatar/'.Auth::user()->avatar) }}"
                      alt="" class="w-48 h-48 bg-indigo-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500">
                 </div>
 
@@ -44,16 +44,13 @@
                         $address = Auth::user()->teacherDetail->address;
                     }
                 @endphp
-                <p class="font-medium tex-lg text-gray-600 mt-3">{{ $address }}</p>
+                <p class="font-medium text-xl text-gray-600 dark:text-gray-200 mt-3">{{ $address }}</p>
             </div>
 
             <div class="my-6 md:w-3/4 md:mx-auto">
                 <h3 class="text-center font-semibold mb-3">Bio</h3>
                 <p class="text-gray-700 dark:text-gray-200 text-center font-light lg:px-16">
-                    An artist of considerable range, Ryan — the
-                    name taken by Melbourne-raised, Brooklyn-based Nick Murphy — writes, performs and records all of his
-                    own music, giving it a warm, intimate feel with a solid groove structure. An artist of considerable
-                    range.
+                    Lorem ipsum
                 </p>
             </div>
 

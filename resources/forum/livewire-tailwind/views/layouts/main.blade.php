@@ -27,8 +27,12 @@
                     <div class="flex flex-col md:flex-row flex-wrap items-center justify-between">
                         <div class="flex w-full md:w-auto items-center justify-between">
                             <div class="grow">
-                                <a href="/" class="text-lg font-medium">
-                                    {{ config('app.name') }}
+                                <a href=" @auth {{ route('home') }} @else / @endauth" class="flex items-center justify-between mr-4 text-lg">
+                                    <x-application-logo class="mr-3 h-8 text-black dark:text-slate-400" />
+                                    <div class="leading-tight tracking-tight font-bold">
+                                        <span class="text-gray-800 dark:text-gray-300">CODE</span>
+                                        <span class="text-pink-300">CRAFT</span>
+                                    </div>
                                 </a>
                             </div>
                             <button type="button" class="md:hidden inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-slate-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-600" aria-controls="navbar" aria-expanded="false" @click="toggleMenu">

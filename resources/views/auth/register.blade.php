@@ -22,34 +22,34 @@
                             <div class="sm:w-1/2">
                                 <x-input-label for="first_name" :invalid="$errors->has('first_name')" :label="__('First Name')" />
                                 <x-input type="text" id="first_name" name="first_name" placeholder="First Name"
-                                    :invalid="$errors->has('first_name')" required />
+                                    :invalid="$errors->has('first_name')" required :value="old('first_name')" />
                                 <x-input-error :messages="$errors->get('first_name')" />
                             </div>
                             <div class="sm:w-1/2">
                                 <x-input-label for="last_name" :invalid="$errors->has('last_name')" :label="__('Last Name')" />
                                 <x-input type="text" id="last_name" name="last_name" placeholder="Last Name"
-                                    :invalid="$errors->has('last_name')" required />
+                                    :invalid="$errors->has('last_name')" required :value="old('last_name')" />
                                 <x-input-error :messages="$errors->get('last_name')" />
                             </div>
                         </div>
                         <div>
                             <x-input-label for="address" :invalid="$errors->has('address')" :label="__('Address')" />
                             <x-input type="text" id="address" name="address" placeholder="Address"
-                                :invalid="$errors->has('address')" />
+                                :invalid="$errors->has('address')" :value="old('address')" />
                             <x-input-error :messages="$errors->get('address')" />
                         </div>
                         <div class="sm:flex sm:space-x-2">
                             <div class="sm:w-3/4">
                                 <x-input-label for="email" :invalid="$errors->has('email')" :label="__('Email')" />
                                 <x-input type="email" id="email" name="email" placeholder="Email"
-                                    :invalid="$errors->has('email')" required />
+                                    :invalid="$errors->has('email')" required :value="old('email')" />
                                 <x-input-error :messages="$errors->get('email')" />
                             </div>
                             <div class="sm:w-5/12">
                                 <x-input-label for="contact_number" :invalid="$errors->has('contact_number')" :label="__('Contact Number')" />
                                 <x-input type="text" id="contact_number" name="contact_number" placeholder="Contact Number"
                                     :invalid="$errors->has('contact_number')" maxlength="11" 
-                                    oninput="numericOnly(this)" />
+                                    oninput="numericOnly(this)" :value="old('contact_number')" />
                                 <x-input-error :messages="$errors->get('contact_number')" />
                             </div>
                         </div>

@@ -67,8 +67,13 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
     Route::controller(ClassroomController::class)->group(function() {
         Route::get('/classes', 'index')
             ->name('classes');
+        Route::post('/classes/{user}', 'create')
+            ->name('classes.create');
     });
     
+    Route::get('/find-teachers', function() {
+        return view('student.find-teacher');
+    })->name('find.teachers');
 
 });
 
