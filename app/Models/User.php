@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -20,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'user_type'
     ];
 
     /**
@@ -43,5 +45,32 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    
+    //scope for getting all teacher
+    public function scopeTeachers($query, $verified)
+    {
+        return $query->where('user_type', 'Teacher')
+                    ->whereRelation('teacherDetail', 'is_verified', $verified);
+    }
+
+    //scope for getting all students
+    public function scopeStudents($query)
+    {
+        return $query->where('user_type', 'Student')
+                    ->with('studentDetail');
+    }
+
+
+    /** Start of Relationships || Relation */
+    public function studentDetail(): HasOne
+    {
+        return $this->hasOne(StudentDetail::class);
+    }
+
+    public function teacherDetail(): HasOne
+    {
+        return $this->hasOne(TeacherDetail::class);
     }
 }
