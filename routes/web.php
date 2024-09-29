@@ -69,6 +69,7 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
 
         //Shared
         Route::get('/classes/{class}', 'view')->name('classes.view');
+        Route::post('/classes/invite', 'invite')->name('classes.invite');
     });
     
     Route::get('/find-teachers', function() {

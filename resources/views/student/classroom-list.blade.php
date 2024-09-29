@@ -192,7 +192,7 @@
                 backdrop: 'static',
                 closable: false,
                 onShow: () => {
-                    $('#join-class-form').find('input').val(null);
+                    $('#join-class-form').find('#code').val(null);
                 }
             };
             const instanceOption = {

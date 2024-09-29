@@ -21,7 +21,8 @@ class ClassroomController extends Controller
 
     public function view(Classroom $class)
     {
-        return view('classroom.classroom', compact('class'));
+        $students = User::where('user_type', 'Student')->get();
+        return view('classroom.classroom', compact('class', 'students'));
     }
 
     public function create(Request $request, User $user)
@@ -175,5 +176,10 @@ class ClassroomController extends Controller
                 'message' => 'Oops! Something went wrong.'
             ]);
         }
+    }
+
+    public function invite(Request $request)
+    {
+        dd($request->all());
     }
 }

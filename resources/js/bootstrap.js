@@ -9,6 +9,8 @@ window.$ = $;
 import 'flowbite';
 import {Modal} from 'flowbite';
 window.Modal = Modal;
+import { CopyClipboard } from 'flowbite';
+window.CopyClipboard = CopyClipboard;
 
 // import { DataTable } from 'simple-datatables';
 // window.DataTable = DataTable;
@@ -30,3 +32,7 @@ window.customSwal = Swal.mixin({
         text: 'text-md'
     }
 });
+
+import select2 from 'select2';
+select2();
+import '../css/styles.css';

@@ -275,7 +275,7 @@
                 backdrop: 'static',
                 closable: false,
                 onShow: () => {
-                    $('#new-class-form').find('input, textarea').val(null);
+                    $('#new-class-form').find('#name, #subject, #description, textarea').val(null);
                 }
             };
             const instanceOption = {
@@ -348,7 +348,7 @@
                 backdrop: 'static',
                 closable: false,
                 onShow: () => {
-                    $('#edit-class-form').find('input, textarea').val(null);
+                    $('#edit-class-form').find('#name, #subject, #description, textarea').val(null);
                 }
             };
             const editInstanceOption = {
