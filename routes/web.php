@@ -76,6 +76,10 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
         Route::delete('/classes/delete/{class}', 'delete')
             ->name('classes.delete');
         
+        Route::post('/classes/join/{user}', 'join')
+            ->name('classes.join');
+        Route::delete('/classes/leave/{class}', 'leave')
+            ->name('classes.leave');
     });
     
     Route::get('/find-teachers', function() {
@@ -96,7 +100,13 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
     Route::post('/be-a-teacher', [RegisteredUserController::class, 'store'])
         ->middleware(['guest:'.config('fortify.guard')]);
     
-    Route::get('/for-approval', fn() => view('auth.teacher-approval-prompt'))
-        ->middleware(['auth:'.config('fortify.guard')])
-        ->name('for.approval.notice');
+    Route::get('/for-approval', function(\Illuminate\Http\Request $request) {
+        if($request->user()->user_type === 'Teacher' && !$request->user()->teacherDetail->is_verified) {
+            return view('auth.teacher-approval-prompt');
+        } else {
+            return to_route('home');
+        }
+    })
+    ->middleware(['auth:'.config('fortify.guard')])
+    ->name('for.approval.notice');
 });

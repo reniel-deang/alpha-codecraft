@@ -34,7 +34,7 @@
                                         class="z-10 hidden text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
                                         <ul class="py-2" aria-labelledby="dropdown-button-{{ $classroom->id }}">
                                             <li>
-                                                <button data-link="{{ route('classes.update', $classroom->id) }}"
+                                                <button data-link="{{ route('classes.update', $classroom) }}"
                                                     data-id="{{ $classroom->id }}" onclick="editClass(this)"
                                                     class="block w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                                                     data-name="{{ $classroom->name }}"
@@ -45,7 +45,7 @@
                                             </li>
                                             <li>
                                                 <button data-id="{{ $classroom->id }}"
-                                                    data-link="{{ route('classes.delete', $classroom->id) }}"
+                                                    data-link="{{ route('classes.delete', $classroom) }}"
                                                     id="delete-modal-{{ $classroom->id }}" onclick="deleteClass(this)"
                                                     class="block w-full text-start px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
                                                     Delete
@@ -144,8 +144,7 @@
                     </div>
                     <div class="col-span-2">
                         <label for="description"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product
-                            Description</label>
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Class Description</label>
                         <x-textarea rows="4" id="description" name="description" :invalid="$errors->has('description')"
                             placeholder="Enter Description (optional)" />
                     </div>
@@ -207,8 +206,7 @@
                     </div>
                     <div class="col-span-2">
                         <label for="description"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product
-                            Description</label>
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Class Description</label>
                         <x-textarea rows="4" id="description" name="description" :invalid="$errors->has('description')"
                             placeholder="Enter Description (optional)" />
                     </div>
@@ -481,14 +479,14 @@
                             }
                         });
                 }, 2000);
-            })
+            });
 
             $('#delete-modal-close').on('click', () => {
                 deleteModal.hide();
-            })
+            });
             $('#cancel-delete').on('click', () => {
                 deleteModal.hide();
-            })
+            });
 
         }
     </script>
