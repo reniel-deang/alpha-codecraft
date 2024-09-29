@@ -1,4 +1,4 @@
-<main class="py-8 antialiased md:py-16">
+<div class="py-8 antialiased md:py-16">
     @if (Auth::user()->has('enrollments')->count() > 0)
         <section class="bg-white dark:bg-gray-900">
             <button onclick="joinClass(this)"
@@ -86,7 +86,7 @@
             </div>
         </div>
     @endif
-</main>
+</div>
 
 
 <!-- Main modal -->
