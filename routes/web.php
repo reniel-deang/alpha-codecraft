@@ -31,55 +31,44 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
     
 
     Route::middleware('admin')->group(function() {
-        Route::get('/dashboard', [DashboardController::class, 'index'])
-            ->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::controller(ManageTeachersController::class)->group(function() {
-            Route::get('/verified-teachers', 'verifiedTeachers')
-                ->name('verified.teachers');
-            Route::get('/unverified-teachers', 'unverifiedTeachers')
-                ->name('unverified.teachers');
+            Route::get('/verified-teachers', 'verifiedTeachers')->name('verified.teachers');
+            Route::get('/unverified-teachers', 'unverifiedTeachers')->name('unverified.teachers');
             
-            Route::get('/get-teachers/{condition}', 'teachersList')
-                ->name('get.teachers');
-            Route::get('/view-file/{file}', 'viewFile')
-                ->name('view.teacher_id');
-            Route::post('/verify-teacher', 'verifyTeacher')
-                ->name('verify.teacher');
+            Route::get('/get-teachers/{condition}', 'teachersList')->name('get.teachers');
+            Route::get('/view-file/{file}', 'viewFile')->name('view.teacher_id');
+            Route::post('/verify-teacher', 'verifyTeacher')->name('verify.teacher');
         });
         
         Route::controller(ManageStudentsController::class)->group(function() {
-            Route::get('/students', 'index')
-                ->name('students.index');
-            Route::get('/get-students', 'getStudents')
-                ->name('get.students');
+            Route::get('/students', 'index')->name('students.index');
+            Route::get('/get-students', 'getStudents')->name('get.students');
         });
     });
 
     Route::controller(CommunityController::class)->group(function() {
-        Route::get('/community', 'index')
-            ->name('community');
+        Route::get('/community', 'index')->name('community');
     });
+
     Route::controller(ProfileController::class)->group(function() {
-        Route::get('/profile', 'index')
-            ->name('profile');
+        Route::get('/profile', 'index')->name('profile');
     });
+
     Route::controller(ClassroomController::class)->group(function() {
-        Route::get('/classes', 'index')
-            ->name('classes');
-        Route::get('/classes/{class}', 'view')
-            ->name('classes.view');
-        Route::post('/classes/{user}', 'create')
-            ->name('classes.create');
-        Route::patch('/classes/update/{class}', 'update')
-            ->name('classes.update');
-        Route::delete('/classes/delete/{class}', 'delete')
-            ->name('classes.delete');
+        //Teachers
+        Route::get('/classes', 'index')->name('classes');
+        Route::post('/classes/{user}', 'create')->name('classes.create');
+        Route::patch('/classes/update/{class}', 'update')->name('classes.update');
+        Route::delete('/classes/delete/{class}', 'delete')->name('classes.delete');
         
-        Route::post('/classes/join/{user}', 'join')
-            ->name('classes.join');
-        Route::delete('/classes/leave/{class}', 'leave')
-            ->name('classes.leave');
+        //Students
+        Route::post('/classes/join/{user}', 'join')->name('classes.join');
+        Route::delete('/classes/leave/{class}', 'leave')->name('classes.leave');
+
+        //Shared
+        Route::get('/classes/{class}', 'view')->name('classes.view');
     });
     
     Route::get('/find-teachers', function() {

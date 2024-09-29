@@ -1,4 +1,4 @@
-<section class="py-8 antialiased md:py-16">
+<main class="py-8 antialiased md:py-16">
     @if ($classrooms->count() > 0)
         <section class="bg-white dark:bg-gray-900">
 
@@ -101,7 +101,7 @@
             </div>
         </div>
     @endif
-</section>
+</main>
 
 <!-- Main modal -->
 <div id="create-class-modal" tabindex="-1" aria-hidden="true"

@@ -1,4 +1,4 @@
 <x-app-layout>
-    @if(Auth::user_type === 'Teacher')
+    @if(Auth::user()->user_type === 'Teacher')
     @endif
 </x-app-layout>
