@@ -67,8 +67,15 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
     Route::controller(ClassroomController::class)->group(function() {
         Route::get('/classes', 'index')
             ->name('classes');
+        Route::get('/classes/{class}', 'view')
+            ->name('classes.view');
         Route::post('/classes/{user}', 'create')
             ->name('classes.create');
+        Route::patch('/classes/update/{class}', 'update')
+            ->name('classes.update');
+        Route::delete('/classes/delete/{class}', 'delete')
+            ->name('classes.delete');
+        
     });
     
     Route::get('/find-teachers', function() {
