@@ -7,16 +7,17 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NotifyTeacher extends Notification implements ShouldQueue
+class SendInvite extends Notification
 {
     use Queueable;
-    protected $data = [];
+
+    protected $data;
     /**
      * Create a new notification instance.
      */
-    public function __construct($data)
+    public function __construct($message)
     {
-        $this->data = $data;
+        $this->data = $message;
     }
 
     /**
@@ -35,13 +36,8 @@ class NotifyTeacher extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->subject($this->data['subject'])
-                    ->greeting('Hello!')
-                    ->line($this->data['message'])
-                    ->action($this->data['action'], url($this->data['url']))
-                    ->line('Thank you for using our application!')
-                    ->line('Best Regards')
-                    ->line('CodeCraft');
+                    ->subject('Class Invitation')
+                    ->markdown('mail.class.invite', ['data' => $this->data]);
     }
 
     /**

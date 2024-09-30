@@ -18,7 +18,7 @@
                         class="mr-3 mb-3 float-right inline-block rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                         Code
                     </button>
-                    <button onclick="inviteStudent(this)" data-link="{{ route('classes.invite') }}"
+                    <button onclick="inviteStudent(this)" data-link="{{ route('classes.invite', $class) }}"
                         class="mr-3 mb-3 float-right inline-block rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                         Invite
                     </button>
@@ -189,6 +189,28 @@
                     }, 2000);
                 });
 
+                
+
+            })
+
+            function inviteStudent(element) {
+                const $targetEl = document.querySelector('#invite-modal');
+                const options = {
+                    backdrop: 'static',
+                    closable: false,
+                    onShow: () => {
+                        $('#invite-form').find('#emails').val(null);
+                    }
+                };
+                const instanceOption = {
+                    id: 'invite-modal',
+                    override: true
+                };
+                const modal = new Modal($targetEl, options, instanceOption);
+
+                modal.show();
+                $('#invite-form').data('link', $(element).data('link'));
+
                 $('#invite-form').on('submit', (event) => {
                     event.preventDefault();
                     if (emails.length < 1) {
@@ -241,29 +263,9 @@
                                         });
                                     }
                                 });
-                        }, 2000);
+                        }, 1000);
                     }
                 })
-
-            })
-
-            function inviteStudent(element) {
-                const $targetEl = document.querySelector('#invite-modal');
-                const options = {
-                    backdrop: 'static',
-                    closable: false,
-                    onShow: () => {
-                        $('#invite-form').find('#emails').val(null);
-                    }
-                };
-                const instanceOption = {
-                    id: 'invite-modal',
-                    override: true
-                };
-                const modal = new Modal($targetEl, options, instanceOption);
-
-                modal.show();
-                $('#invite-form').data('link', $(element).data('link'));
 
                 $('#invite-close').on('click', () => {
                     modal.hide();
@@ -292,7 +294,6 @@
                         )
                         $('#list').append(listItem);
                         emails.push(selectValue);
-                        console.log(emails);
                     }
                 }
 
@@ -304,7 +305,6 @@
                     const x = emails.splice(index, 1);
                     $(element).parent().remove();
                 }
-                console.log(emails)
             }
         </script>
     @endpush

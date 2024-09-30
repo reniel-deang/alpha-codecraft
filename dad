@@ -1,0 +1,53 @@
+[33mcommit a8caae22c40369f40a6eb241ef9425405a9439c3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Zilphixx <144513145+Zilphixx@users.noreply.github.com>
+Date:   Sun Sep 29 22:05:17 2024 +0800
+
+    updates
+
+[33mcommit d9ef50f29d46800f218acf8c1d3d7c1117554a91[m
+Author: Zilphixx <144513145+Zilphixx@users.noreply.github.com>
+Date:   Sun Sep 29 17:00:46 2024 +0800
+
+    updates
+
+[33mcommit 615a2e63652e33b22cd9ffddf419c3e051f6c59c[m
+Author: Zilphixx <144513145+Zilphixx@users.noreply.github.com>
+Date:   Sun Sep 29 15:45:47 2024 +0800
+
+    updates
+
+[33mcommit 71e2b73e87c377e6cde6b6407c69dcfcb60edd24[m
+Author: Zilphixx <144513145+Zilphixx@users.noreply.github.com>
+Date:   Sun Sep 29 15:09:04 2024 +0800
+
+    added student joining class
+
+[33mcommit 0349a5478a67c5e27abf66d73be73125ab2a446d[m
+Author: Zilphixx <144513145+Zilphixx@users.noreply.github.com>
+Date:   Sun Sep 29 12:09:08 2024 +0800
+
+    classroom creation
+
+[33mcommit 68034a55a895ed52f317d84e2d895c907a866584[m
+Author: Zilphixx <144513145+Zilphixx@users.noreply.github.com>
+Date:   Sun Sep 29 07:33:26 2024 +0800
+
+    added updates on classrooms
+
+[33mcommit b9b6cd59b7bf22c4f05668f34f986795418500b5[m
+Author: Zilphixx <144513145+Zilphixx@users.noreply.github.com>
+Date:   Sat Sep 28 12:25:11 2024 +0800
+
+    Initial Commit
+
+[33mcommit 16fb052a6312a2fe489d30e11ef8a4b5e8c2680d[m
+Author: Zilphixx <144513145+Zilphixx@users.noreply.github.com>
+Date:   Wed Sep 25 19:32:04 2024 +0800
+
+    Install Pest
+
+[33mcommit 89c5979980a7a5b0896953abd0726e83a12b1de4[m
+Author: Zilphixx <144513145+Zilphixx@users.noreply.github.com>
+Date:   Wed Sep 25 19:31:02 2024 +0800
+
+    Set up a fresh Laravel app

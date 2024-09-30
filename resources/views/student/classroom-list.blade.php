@@ -1,5 +1,5 @@
 <div class="py-8 antialiased md:py-16">
-    @if (Auth::user()->has('enrollments')->count() > 0)
+    @if ($enrollments->count() > 0)
         <section class="bg-white dark:bg-gray-900">
             <button onclick="joinClass(this)"
                 class="float-right mx-5 my-2 block text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
@@ -249,7 +249,7 @@
                                 });
                             }
                         });
-                }, 2000);
+                }, 1000);
             });
 
             $('#modal-close').on('click', () => {
@@ -318,7 +318,7 @@
                                 });
                             }
                         });
-                }, 2000);
+                }, 1000);
             })
 
             $('#leave-modal-close').on('click', () => {

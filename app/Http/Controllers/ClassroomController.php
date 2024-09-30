@@ -5,8 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Classroom;
 use App\Models\Enrollment;
 use App\Models\User;
+use App\Notifications\SendInvite;
+use App\Notifications\SendInvites;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 
 class ClassroomController extends Controller
 {
@@ -14,14 +19,22 @@ class ClassroomController extends Controller
 
     public function index()
     {
-        $classrooms = Classroom::with('teacher')->whereRelation('teacher', 'teacher_id', request()->user()->id)->get();
-        $enrollments = Classroom::with('enrollments')->whereRelation('enrollments', 'student_id', request()->user()->id)->get();
+        $user = Auth::user();
+        
+        $classrooms = Classroom::whereRelation('teacher', 'teacher_id', $user->id)->get();
+        $enrollments = Classroom::whereRelation('enrollments', 'student_id', $user->id)->get();
+        
         return view('shared.classroom', compact('classrooms', 'enrollments'));
     }
 
     public function view(Classroom $class)
     {
-        $students = User::where('user_type', 'Student')->get();
+        $students = User::with('studentDetail')
+            ->where('user_type', 'Student')
+            ->whereDoesntHave('enrollments', function (Builder $query) use ($class) {
+                $query->where('classroom_id', $class->id);
+            })->get();
+
         return view('classroom.classroom', compact('class', 'students'));
     }
 
@@ -111,7 +124,7 @@ class ClassroomController extends Controller
         ]);
 
         $classroom = Classroom::where('code', $code)->first();
-        $enrollment = Enrollment::where('classroom_id', $classroom?->id)->first();
+        $enrollment = Enrollment::where('student_id', $user->id)->where('classroom_id', $classroom?->id)->first();
 
         if (!$classroom) {
             return response()->json([
@@ -178,8 +191,72 @@ class ClassroomController extends Controller
         }
     }
 
-    public function invite(Request $request)
+    public function invite(Request $request, Classroom $class)
     {
-        dd($request->all());
+        $request->merge(['emails' => json_decode($request->input('emails'), true)]);
+        $validated = $request->validate([
+            'emails.*' => ['required', 'email']
+        ]);
+
+        $users = User::with('studentDetail')
+            ->where('user_type', 'Student')
+            ->whereDoesntHave('enrollments', function (Builder $query) use ($class) {
+                $query->where('classroom_id', $class->id);
+            })
+            ->whereIn('email', $validated['emails'])
+            ->get();
+
+        
+
+        foreach ($users as $user) {
+            $invites = [
+                'code' => $class->code,
+                'inviteUrl' => URL::signedRoute('classes.email.invite', ['user' => $user, 'code' => $class->code]),
+                'name' => $user->name,
+                'class' => $class->name
+            ];
+            $user->notify(new SendInvite($invites));
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Invites sent to all students selected.'
+        ]);
+    }
+
+    public function inviteLink($code, $user)
+    {
+        $classroom = Classroom::where('code', $code)->first();
+        $enrollment = Enrollment::where('student_id', $user)->where('classroom_id', $classroom?->id)->first();
+        
+        if (!$classroom) {
+            return response()->json([
+                'message' => 'No class found with the provided code.'
+            ]);
+        } else {
+            if ($enrollment) {
+                return response()->json([
+                    'message' => 'You cannot join the class because you are already enrolled in it.'
+                ]);
+            }
+        }
+
+        $joins = DB::transaction(function() use ($classroom, $user) {
+            $class = Enrollment::make();
+            $class->student()->associate($user);
+            $class->classroom()->associate($classroom);
+
+            $class->save();
+
+            return $class;
+        });
+
+        if($joins) {
+            return to_route('classes');
+        } else {
+            return response()->json([
+                'error' => 'Something went wrong. Please try again later.'
+            ]);
+        }
     }
 }

@@ -76,6 +76,7 @@ class ManageTeachersController extends Controller
 
         if($data['action'] === 'Approve') {
             $content = [
+                'subject' => 'Registration Approved.',
                 'message' => 'Your application has been approved. Click on the button below to login with your account.',
                 'url' => url('/login'),
                 'action' => 'Login'
@@ -94,6 +95,7 @@ class ManageTeachersController extends Controller
 
         } else {
             $content = [
+                'subject' => 'Registration Rejected',
                 'message' => "Your application has been rejected. Reason being: {$data['reason']}. You can register again just click on the button below.",
                 'url' => url('/register'),
                 'action' => 'Login'
