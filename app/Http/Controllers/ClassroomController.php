@@ -6,7 +6,6 @@ use App\Models\Classroom;
 use App\Models\Enrollment;
 use App\Models\User;
 use App\Notifications\SendInvite;
-use App\Notifications\SendInvites;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

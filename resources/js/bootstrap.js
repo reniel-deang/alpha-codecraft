@@ -12,19 +12,13 @@ window.Modal = Modal;
 import { CopyClipboard } from 'flowbite';
 window.CopyClipboard = CopyClipboard;
 
-// import { DataTable } from 'simple-datatables';
-// window.DataTable = DataTable;
-
 import DataTable from 'datatables.net-dt';
 import 'datatables.net-dt/css/dataTables.dataTables.css';
 import 'datatables.net-responsive';
-
 window.DataTable = DataTable;
-
 
 import Swal from 'sweetalert2';
 window.Swal = Swal;
-
 window.customSwal = Swal.mixin({
     customClass: {
         popup: 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200',

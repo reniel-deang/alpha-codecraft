@@ -33,4 +33,9 @@ class Classroom extends Model
     {
         return $this->belongsToMany(User::class, 'enrollments');
     }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(ClassPost::class);
+    }
 }

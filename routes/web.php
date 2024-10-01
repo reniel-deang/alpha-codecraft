@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ManageStudentsController;
 use App\Http\Controllers\Admin\ManageTeachersController;
+use App\Http\Controllers\ClassPostController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\ProfileController;
@@ -13,22 +14,17 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/landing', function() {
-    $user = request()->user();
-    switch ($user->user_type) {
-        case 'Admin':
-            return to_route('dashboard');
-            break;
-        
-        default:
-            return to_route('community');
-            break;
-    }
-})->name('home');
-
 
 Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
-    
+        
+    Route::get('/landing', function() {
+        $user = request()->user();
+        if($user && $user->user_type === 'Admin') {
+            return to_route('dashboard');
+        } else {
+            return to_route('community');
+        }
+    })->name('home');
 
     Route::middleware('admin')->group(function() {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -72,6 +68,14 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
         Route::post('/classes/{class}/invite', 'invite')->name('classes.invite');
 
         Route::get('/classes/{code}/{user}', 'inviteLink')->name('classes.email.invite');
+    });
+
+    Route::controller(ClassPostController::class)->group(function() {
+        Route::post('/classes/{class}/post', 'post')->name('classes.post');
+        Route::patch('/classes/*/post/update/{post}', 'update')->can('update', 'post')->name('classes.post.update');
+        Route::delete('/classes/*/post/delete/{post}', 'delete')->can('delete', 'post')->name('classes.post.delete');
+
+        Route::post('/classes/*/post/{post}/comment', 'comment')->name('classes.post.comment');
     });
     
     Route::get('/find-teachers', function() {
