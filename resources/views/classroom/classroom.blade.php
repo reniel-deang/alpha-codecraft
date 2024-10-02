@@ -38,23 +38,24 @@
                 @if ($class->conference)
                     <a href="{{ route('classes.meet.start', [$class, $class->conference]) }}"
                         class="mr-3 mb-3 float-right inline-block rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-                        <svg class="inline-block w-5 h-5 mr-2" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
-                            viewBox="0 0 24 24">
+                        <svg class="inline-block w-5 h-5 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M19 12H5m14 0-4 4m4-4-4-4" />
                         </svg>
                         Go to Meeting
                     </a>
                 @else
-                    <button onclick="newMeet(this)" data-link="{{ route('classes.meet.create', $class) }}"
-                        class="mr-3 mb-3 float-right inline-block rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-                        <svg class="inline-block w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 4v16m8-8H4"></path>
-                        </svg>
-                        New Meeting
-                    </button>
+                    @if (Auth::user()->user_type === 'Teacher')
+                        <button onclick="newMeet(this)" data-link="{{ route('classes.meet.create', $class) }}"
+                            class="mr-3 mb-3 float-right inline-block rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                            <svg class="inline-block w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            New Meeting
+                        </button>
+                    @endif
                 @endif
             </div>
 
@@ -65,7 +66,8 @@
                     <!-- Post Header -->
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center">
-                            <img src="{{ asset("storage/users-avatar/{$post->author?->avatar}") }}" alt="Teacher Avatar" class="w-12 h-12 rounded-full">
+                            <img src="{{ asset("storage/users-avatar/{$post->author?->avatar}") }}" alt="Teacher Avatar"
+                                class="w-12 h-12 rounded-full">
                             <div class="ml-3">
                                 <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
                                     {{ $post->author->name }}</h2>
@@ -144,8 +146,8 @@
                         <!-- Single Comment -->
                         @forelse ($post->comments as $comment)
                             <div class="flex items-start mb-4">
-                                <img src="{{ asset("storage/users-avatar/{$comment->author?->avatar}") }}" alt="Student Avatar"
-                                    class="w-10 h-10 rounded-full mr-3">
+                                <img src="{{ asset("storage/users-avatar/{$comment->author?->avatar}") }}"
+                                    alt="Student Avatar" class="w-10 h-10 rounded-full mr-3">
                                 <div class="w-3/4">
                                     <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
                                         <h5 class="font-semibold text-gray-900 dark:text-gray-100">
