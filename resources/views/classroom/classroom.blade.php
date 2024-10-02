@@ -35,6 +35,27 @@
                     </svg>
                     New Post
                 </button>
+                @if ($class->conference)
+                    <a href="{{ route('classes.meet.start', [$class, $class->conference]) }}"
+                        class="mr-3 mb-3 float-right inline-block rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                        <svg class="inline-block w-5 h-5 mr-2" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                            viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 12H5m14 0-4 4m4-4-4-4" />
+                        </svg>
+                        Go to Meeting
+                    </a>
+                @else
+                    <button onclick="newMeet(this)" data-link="{{ route('classes.meet.create', $class) }}"
+                        class="mr-3 mb-3 float-right inline-block rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                        <svg class="inline-block w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        New Meeting
+                    </button>
+                @endif
             </div>
 
             <!-- Container -->
@@ -44,7 +65,7 @@
                     <!-- Post Header -->
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center">
-                            <img src="https://i.pravatar.cc/100" alt="Teacher Avatar" class="w-12 h-12 rounded-full">
+                            <img src="{{ asset("storage/users-avatar/{$post->author?->avatar}") }}" alt="Teacher Avatar" class="w-12 h-12 rounded-full">
                             <div class="ml-3">
                                 <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
                                     {{ $post->author->name }}</h2>
@@ -70,7 +91,7 @@
                                     class="z-10 hidden text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
                                     <ul class="py-2" aria-labelledby="dropdown-button-{{ $post->id }}">
                                         <li>
-                                            <button data-link="{{ route('classes.post.update', $post) }}"
+                                            <button data-link="{{ route('classes.post.update', [$class, $post]) }}"
                                                 data-id="{{ $post->id }}" onclick="editPost(this)"
                                                 class="block w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                                                 data-post="{{ $post->title }}" data-content="{{ $post->content }}">
@@ -80,7 +101,7 @@
                                         <li>
                                             <button data-id="{{ $post->id }}" id="delete-modal-{{ $post->id }}"
                                                 onclick="deletePost(this)"
-                                                data-link="{{ route('classes.post.delete', $post->id) }}"
+                                                data-link="{{ route('classes.post.delete', [$class, $post]) }}"
                                                 class="block w-full text-start px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
                                                 Delete
                                             </button>
@@ -123,7 +144,7 @@
                         <!-- Single Comment -->
                         @forelse ($post->comments as $comment)
                             <div class="flex items-start mb-4">
-                                <img src="https://i.pravatar.cc/40" alt="Student Avatar"
+                                <img src="{{ asset("storage/users-avatar/{$comment->author?->avatar}") }}" alt="Student Avatar"
                                     class="w-10 h-10 rounded-full mr-3">
                                 <div class="w-3/4">
                                     <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
@@ -152,7 +173,7 @@
                         <!-- Comment Input -->
                         <div class="mt-6">
                             <form id="comment-form" method="POST"
-                                data-link="{{ route('classes.post.comment', $post) }}">
+                                data-link="{{ route('classes.post.comment', [$class, $post]) }}">
                                 @csrf
                                 <x-textarea name="content" placeholder="Post a comment..." rows="3" />
                                 <button
@@ -223,6 +244,53 @@
                                     clip-rule="evenodd"></path>
                             </svg>
                             Save post
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create meet modal -->
+    <div id="meet-modal" tabindex="-1" aria-hidden="true"
+        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-lg max-h-full">
+            <!-- Modal content -->
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <!-- Modal header -->
+                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        New Meeting
+                    </h3>
+                    <button id="meet-close" type="button"
+                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                    </button>
+                </div>
+                <!-- Modal body -->
+                <form id="meet-form" class="p-4 md:p-5" method="POST">
+                    @csrf
+                    <div class="mb-4">
+                        <x-input-label for="conference_name" :label="__('Meet Title')" />
+                        <x-input id="conference_name" name="conference_name" placeholder="Meet title"
+                            :invalid="$errors->has('conference_name')" required />
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit"
+                            class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            Save meeting
                         </button>
                     </div>
                 </form>
@@ -850,6 +918,77 @@
                     deleteModal.hide();
                 });
 
+            }
+
+            function newMeet(element) {
+                const $targetEl = document.querySelector('#meet-modal');
+                const options = {
+                    backdrop: 'static',
+                    closable: false,
+                    onShow: () => {
+                        $('#meet-form').find('#conference_name').val(null);
+                    }
+                };
+                const instanceOption = {
+                    id: 'meet-modal',
+                    override: true
+                };
+                const modal = new Modal($targetEl, options, instanceOption);
+
+                modal.show();
+                $('#meet-form').data('link', $(element).data('link'));
+
+                $('#meet-form').on('submit', (event) => {
+                    event.preventDefault();
+                    customSwal.fire({
+                        title: 'Creating meet. Please wait...',
+                        allowOutsideClick: false
+                    });
+                    customSwal.showLoading();
+                    setTimeout(() => {
+                        axios.post($('#meet-form').data('link'), $('#meet-form').serialize())
+                            .then((response) => {
+                                if (response.data.success) {
+                                    customSwal.fire({
+                                        title: 'Success',
+                                        icon: 'success',
+                                        text: response.data.message,
+                                        timer: 5000,
+                                        didClose: () => {
+                                            modal.hide();
+                                            location.reload();
+                                        }
+                                    });
+                                } else {
+                                    customSwal.fire({
+                                        title: 'Error',
+                                        icon: 'error',
+                                        text: response.data.message,
+                                        timer: 5000,
+                                    });
+                                }
+                            }).catch((error) => {
+                                let errMsg = $('<div></div>');
+
+                                $.each(error.response.data.errors, function() {
+                                    errMsg.append($(`<p>${$(this)[0]}</p>`));
+                                });
+
+                                if (error.status === 422) {
+                                    customSwal.fire({
+                                        title: 'Error',
+                                        icon: 'error',
+                                        html: errMsg,
+                                        timer: 5000,
+                                    });
+                                }
+                            });
+                    }, 1000);
+                })
+
+                $('#meet-close').on('click', () => {
+                    modal.hide();
+                });
             }
         </script>
     @endpush

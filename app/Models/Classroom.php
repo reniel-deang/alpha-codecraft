@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Classroom extends Model
 {
@@ -37,5 +38,10 @@ class Classroom extends Model
     public function posts(): HasMany
     {
         return $this->hasMany(ClassPost::class);
+    }
+
+    public function conference(): HasOne
+    {
+        return $this->hasOne(ClassConference::class);
     }
 }

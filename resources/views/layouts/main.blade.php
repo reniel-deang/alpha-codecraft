@@ -19,7 +19,8 @@
     </head>
     <body class="antialiased bg-gray-50 dark:bg-gray-900">
 
-        @include('layouts.navbar')
+        {{-- @include('layouts.navbar') --}}
+        @includeUnless(request()->routeIs('classes.meet.start'), 'layouts.navbar')
 
         @if(Auth::user()->user_type === 'Admin')
             @include('layouts.sidebar')

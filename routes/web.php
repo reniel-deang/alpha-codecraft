@@ -3,10 +3,12 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ManageStudentsController;
 use App\Http\Controllers\Admin\ManageTeachersController;
+use App\Http\Controllers\ClassConferenceController;
 use App\Http\Controllers\ClassPostController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 
@@ -72,10 +74,15 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
 
     Route::controller(ClassPostController::class)->group(function() {
         Route::post('/classes/{class}/post', 'post')->name('classes.post');
-        Route::patch('/classes/*/post/update/{post}', 'update')->can('update', 'post')->name('classes.post.update');
-        Route::delete('/classes/*/post/delete/{post}', 'delete')->can('delete', 'post')->name('classes.post.delete');
+        Route::patch('/classes/{class}/post/update/{post}', 'update')->can('update', 'post')->name('classes.post.update');
+        Route::delete('/classes/{class}/post/delete/{post}', 'delete')->can('delete', 'post')->name('classes.post.delete');
 
-        Route::post('/classes/*/post/{post}/comment', 'comment')->name('classes.post.comment');
+        Route::post('/classes/{class}/post/{post}/comment', 'comment')->name('classes.post.comment');
+    });
+
+    Route::controller(ClassConferenceController::class)->group(function() {
+        Route::get('/classes/{class}/meet/{conference}', 'startMeeting')->name('classes.meet.start');
+        Route::post('/classes/{class}/meet', 'createMeeting')->name('classes.meet.create');
     });
     
     Route::get('/find-teachers', function() {
@@ -84,7 +91,7 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
 
 });
 
-
+Route::get('/meet', fn() => view('sample'));
 
 //Fortify route for becoming a teacher || can't modify vendor files
 //So we extend the routes :)
@@ -96,7 +103,7 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
     Route::post('/be-a-teacher', [RegisteredUserController::class, 'store'])
         ->middleware(['guest:'.config('fortify.guard')]);
     
-    Route::get('/for-approval', function(\Illuminate\Http\Request $request) {
+    Route::get('/for-approval', function(Request $request) {
         if($request->user()->user_type === 'Teacher' && !$request->user()->teacherDetail->is_verified) {
             return view('auth.teacher-approval-prompt');
         } else {

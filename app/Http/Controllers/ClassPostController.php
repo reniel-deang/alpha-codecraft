@@ -41,7 +41,7 @@ class ClassPostController extends Controller
         }
     }
 
-    public function update(Request $request, ClassPost $post)
+    public function update(Request $request, Classroom $class, ClassPost $post)
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:100'],
@@ -67,7 +67,7 @@ class ClassPostController extends Controller
         }
     }
 
-    public function delete(ClassPost $post)
+    public function delete(Classroom $class, ClassPost $post)
     {
         $deletePost = DB::transaction(function() use ($post) {
 
@@ -90,7 +90,7 @@ class ClassPostController extends Controller
 
     }
 
-    public function comment(Request $request, ClassPost $post)
+    public function comment(Request $request, Classroom $class, ClassPost $post)
     {
         $validated = $request->validate([
             'content' => ['required', 'string']
