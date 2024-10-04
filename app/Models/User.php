@@ -106,4 +106,19 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->HasMany(ClassConference::class, 'teacher_id');
     }
 
+    public function communityPosts(): HasMany
+    {
+        return $this->hasMany(CommunityPost::class, 'author_id');
+    }
+
+    public function communityPostComments(): HasMany
+    {
+        return $this->hasMany(CommunityPostComment::class, 'author_id');
+    }
+
+    public function temporaryUploads(): HasMany
+    {
+        return $this->hasMany(TemporaryUpload::class);
+    }
+
 }

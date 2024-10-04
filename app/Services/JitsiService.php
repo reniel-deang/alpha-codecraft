@@ -9,7 +9,7 @@ class JitsiService
 {
     private $appId = 'your_app_id';
     private $appSecret = 'your_app_secret';
-    private $domain = 'api.codecraftmeet.online';
+    private $domain = 'webapi.codecraftmeet.online';
 
     public function generateToken($user, $role, $room)
     {
@@ -20,9 +20,9 @@ class JitsiService
                     "name" => $user->name,
                     "email" => $user->email,
                     "moderator" => $role === 'Teacher' ? 'true' : 'false'
-                ],
-                "room" => $room, 
+                ]
             ],
+            "room" => $room, 
             "aud" => $this->appId,
             "iss" => $this->appId,
             "sub" => $this->domain,

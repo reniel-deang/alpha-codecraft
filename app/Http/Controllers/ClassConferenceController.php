@@ -20,11 +20,10 @@ class ClassConferenceController extends Controller
     public function startMeeting(Request $request, Classroom $class, ClassConference $conference)
     {
         $user = $request->user();
-        $room = $conference->conference_name;
 
-        $jwt = $this->jitsiService->generateToken($user, $user->user_type, $room);
+        //$jwt = $this->jitsiService->generateToken($user, $user->user_type, $room);
 
-        return view('classroom.meet', compact('user', 'jwt', 'room', 'class'));
+        return view('classroom.meet', compact('user', 'conference', 'class'));
     }
 
     /**

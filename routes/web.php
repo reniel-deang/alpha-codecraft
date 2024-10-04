@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\ManageTeachersController;
 use App\Http\Controllers\ClassConferenceController;
 use App\Http\Controllers\ClassPostController;
 use App\Http\Controllers\ClassroomController;
-use App\Http\Controllers\CommunityController;
+use App\Http\Controllers\CommunityPostController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -46,8 +46,14 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
         });
     });
 
-    Route::controller(CommunityController::class)->group(function() {
+    Route::controller(CommunityPostController::class)->group(function() {
         Route::get('/community', 'index')->name('community');
+        Route::post('/community/save', 'store')->name('community.post');
+        Route::post('/community/{post}/comment', 'comment')->name('community.comment');
+
+        Route::post('/community/{post}/report', 'report')->name('community.report');
+        Route::post('/temp-upload', 'tempImgUpload')->name('community.temp.img');
+        Route::post('/temp-delete', 'tempImgDelete')->name('community.temp.delete');
     });
 
     Route::controller(ProfileController::class)->group(function() {

@@ -3,14 +3,20 @@
     <div id="meet" class="h-screen w-full"></div>
 
     @push('scripts')
-        <script src="https://api.codecraftmeet.online/external_api.js"></script>
+        <script src="https://webapi.codecraftmeet.online/external_api.js"></script>
 
         <script>
-            const domain = "api.codecraftmeet.online";
+            const domain = "webapi.codecraftmeet.online";
             const options = {
-                roomName: "{{ $room }}",
-                jwt: "{{ $jwt }}",
-                parentNode: document.querySelector('#meet')
+                roomName: "{{ $conference->conference_name }}",
+                parentNode: document.querySelector('#meet'),
+                userInfo: {
+                    email: '{{ $user->email }}',
+                    displayName: '{{ $user->name }}',
+                    avatarUrl: '{{ asset("storage/users-avatar/{$user->avatar}") }}',
+                    id: '{{ $user->id }}',
+                },
+                lang: 'en'
             };
             const api = new JitsiMeetExternalAPI(domain, options);
 

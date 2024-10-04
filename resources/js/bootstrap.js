@@ -30,3 +30,8 @@ window.customSwal = Swal.mixin({
 import select2 from 'select2';
 select2();
 import '../css/styles.css';
+
+import { Dropzone } from "dropzone";
+import 'dropzone/dist/dropzone.css';
+window.Dropzone = Dropzone;
+// const dropzone = new Dropzone("#dropzone", { url: "/file/post" });
