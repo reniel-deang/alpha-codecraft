@@ -4,7 +4,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3">
                 <div class="grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0">
                     <div>
-                        <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">22</p>
+                        <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">{{ Auth::user()->communityPosts()->count() }}</p>
                         <p class="text-gray-400">Moments</p>
                     </div>
                     <div>

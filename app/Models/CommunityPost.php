@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class CommunityPost extends Model
 {
@@ -29,5 +30,15 @@ class CommunityPost extends Model
     public function communityPostAttachments(): HasMany
     {
         return $this->hasMany(CommunityPostAttachment::class);
+    }
+
+    public function temporaryDeletes(): HasMany
+    {
+        return $this->hasMany(TemporaryDelete::class);
+    }
+
+    public function reports(): HasMany
+    {
+        return $this->hasMany(ReportPost::class);
     }
 }

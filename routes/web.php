@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ManageReportController;
 use App\Http\Controllers\Admin\ManageStudentsController;
 use App\Http\Controllers\Admin\ManageTeachersController;
 use App\Http\Controllers\ClassConferenceController;
@@ -44,11 +45,17 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
             Route::get('/students', 'index')->name('students.index');
             Route::get('/get-students', 'getStudents')->name('get.students');
         });
+
+        Route::controller(ManageReportController::class)->group(function() {
+            Route::get('/reported-posts', 'index')->name('reported.posts');
+        });
     });
 
     Route::controller(CommunityPostController::class)->group(function() {
         Route::get('/community', 'index')->name('community');
         Route::post('/community/save', 'store')->name('community.post');
+        Route::patch('/community/{post}/update', 'update')->name('community.post.update');
+        Route::delete('/community/{post}/delete', 'delete')->name('community.post.delete');
         Route::post('/community/{post}/comment', 'comment')->name('community.comment');
 
         Route::post('/community/{post}/report', 'report')->name('community.report');

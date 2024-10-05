@@ -121,4 +121,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(TemporaryUpload::class);
     }
 
+    public function reports(): HasMany
+    {
+        return $this->hasMany(ReportPost::class, 'reporter_id');
+    }
+
 }

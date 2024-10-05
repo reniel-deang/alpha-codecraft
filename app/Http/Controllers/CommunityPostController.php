@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\CommunityPost;
+use App\Models\CommunityPostAttachment;
+use App\Models\ReportPost;
+use App\Models\TemporaryDelete;
 use App\Models\TemporaryUpload;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class CommunityPostController extends Controller
 {
@@ -14,7 +18,7 @@ class CommunityPostController extends Controller
 
     public function index()
     {
-        $fileName = 'temporary-'.Carbon::now()->format('Y-m-d-h-i-s');
+        $fileName = 'temporary-' . Carbon::now()->format('Y-m-d-h-i-s');
         $communityPosts = CommunityPost::with('author')->latest()->get();
         return view('shared.community', compact('communityPosts', 'fileName'));
     }
@@ -27,12 +31,12 @@ class CommunityPostController extends Controller
         ]);
         $user = $request->user();
 
-        $post = DB::transaction(function() use ($user, $validated, $request) {
+        $post = DB::transaction(function () use ($user, $validated, $request) {
             $communityPost = $user->communityPosts()->create($validated);
 
             $temp = TemporaryUpload::where('user_id', $user->id)->where('name', $request->input('name'))->get();
 
-            if ($temp) {       
+            if ($temp) {
                 foreach ($temp as $file) {
                     $communityPost->communityPostAttachments()->create([
                         'original_name' => $file->original_name,
@@ -46,10 +50,90 @@ class CommunityPostController extends Controller
             return $communityPost;
         });
 
-        if($post) {
+        if ($post) {
             return response()->json([
                 'success' => true,
                 'message' => 'Post successfully created.'
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops! Something went wrong.'
+            ]);
+        }
+    }
+
+    public function update(Request $request, CommunityPost $post)
+    {
+        $validated = $request->validate([
+            'title' => ['required', 'string'],
+            'content' => ['required', 'string'],
+        ]);
+        $user = $request->user();
+
+        $post = DB::transaction(function () use ($user, $validated, $post, $request) {
+            $communityPost = $post->update($validated);
+
+            $deletes = TemporaryDelete::where('community_post_id', $post->id)->get();
+            $temp = TemporaryUpload::where('user_id', $user->id)->where('name', $request->input('name'))->get();
+
+            if ($temp) {
+                foreach ($temp as $file) {
+                    $post->communityPostAttachments()->create([
+                        'original_name' => $file->original_name,
+                        'name' => $file->name,
+                        'path' => $file->path
+                    ]);
+                    $file->delete();
+                }
+            }
+
+            if ($deletes) {
+                foreach ($deletes as $delete) {
+                    if (Storage::disk('public')->exists($delete->path)) {
+                        Storage::disk('public')->delete($delete->path);
+                        $post->communityPostAttachments()->where('id', $delete->community_post_attachment_id)->delete();
+                        $delete->delete();
+                    }
+                }
+            }
+
+            return $communityPost;
+        });
+
+        if ($post) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Post successfully created.'
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops! Something went wrong.'
+            ]);
+        }
+    }
+
+    public function delete(Request $request, CommunityPost $post)
+    {
+        $deletePost = DB::transaction(function () use ($post) {
+            $files = $post->communityPostAttachments()->get();
+
+            foreach ($files as $file) {
+                if (Storage::disk('public')->exists($file->path)) {
+                    Storage::disk('public')->delete($file->path);
+                }
+            }
+
+            $delete = $post->delete();
+
+            return $delete;
+        });
+
+        if ($deletePost) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Post successfully deleted.'
             ]);
         } else {
             return response()->json([
@@ -66,7 +150,7 @@ class CommunityPostController extends Controller
         ]);
         $user = $request->user();
 
-        $comment = DB::transaction(function() use ($post, $user, $validated) {
+        $comment = DB::transaction(function () use ($post, $user, $validated) {
             $content = $post->comments()->make($validated);
             $content->author()->associate($user);
 
@@ -74,10 +158,38 @@ class CommunityPostController extends Controller
             return $content;
         });
 
-        if($comment) {
+        if ($comment) {
             return response()->json([
                 'success' => true,
                 'message' => 'Comment successfully posted.'
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops! Something went wrong.'
+            ]);
+        }
+    }
+
+    public function report(Request $request, CommunityPost $post)
+    {
+        $user = $request->user();
+
+        $report = DB::transaction(function () use ($user, $post) {
+            $reportPost = new ReportPost();
+
+            $reportPost->reporter()->associate($user);
+            $reportPost->communityPost()->associate($post);
+
+            $reportPost->save();
+
+            return $reportPost;
+        });
+
+        if ($report) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Post successfully reported.'
             ]);
         } else {
             return response()->json([
@@ -105,6 +217,29 @@ class CommunityPostController extends Controller
 
     public function tempImgDelete(Request $request)
     {
-        dd($request->all());
+        $name = $request->input('name');
+
+        $temporary = TemporaryUpload::where('original_name', $name)->first();
+
+        if ($temporary) {
+            if (Storage::disk('public')->exists($temporary->path)) {
+                Storage::disk('public')->delete($temporary->path);
+                $temporary->delete();
+            }
+        } else {
+            $edit = CommunityPostAttachment::where('original_name', $name)->first();
+            $post = $edit->communityPost;
+
+            if ($edit) {
+                $tempDelete = $edit->temporaryDelete()->make([
+                    'original_name' => $edit->original_name,
+                    'name' => $edit->name,
+                    'path' => $edit->path
+                ]);
+                $tempDelete->communityPost()->associate($post);
+                $tempDelete->save();
+            }
+        }
+        return response()->json(['success' => 'Files removed successfully']);
     }
 }

@@ -5,9 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class CommunityPostAttachment extends Model
+class TemporaryDelete extends Model
 {
     use HasFactory;
 
@@ -17,13 +16,13 @@ class CommunityPostAttachment extends Model
         'path'
     ];
 
+    public function communityPostAttachment(): BelongsTo
+    {
+        return $this->belongsTo(CommunityPostAttachment::class);
+    }
+
     public function communityPost(): BelongsTo
     {
         return $this->belongsTo(CommunityPost::class);
-    }
-
-    public function temporaryDelete(): HasOne
-    {
-        return $this->hasOne(TemporaryDelete::class);
     }
 }

@@ -11,6 +11,7 @@ class TemporaryUpload extends Model
     use HasFactory;
 
     protected $fillable = [
+        'original_name',
         'name',
         'path'
     ];

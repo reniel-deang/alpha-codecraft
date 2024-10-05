@@ -5,25 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class CommunityPostAttachment extends Model
+class ReportPost extends Model
 {
     use HasFactory;
-
-    protected $fillable = [
-        'original_name',
-        'name',
-        'path'
-    ];
 
     public function communityPost(): BelongsTo
     {
         return $this->belongsTo(CommunityPost::class);
     }
 
-    public function temporaryDelete(): HasOne
+    public function reporter(): BelongsTo
     {
-        return $this->hasOne(TemporaryDelete::class);
+        return $this->belongsTo(User::class, 'reporter_id');
     }
 }
