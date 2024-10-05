@@ -3,7 +3,7 @@
         <div
             class="p-8 bg-white border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700 text-gray-700 dark:text-gray-200 shadow mt-24">
             <div class="grid grid-cols-1 md:grid-cols-3">
-                <div class="grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0">
+                <div class="grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0 @if(in_array($user->user_type, ['Admin', 'Teacher'])) invisible @endif">
                     <div>
                         <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">
                             {{ $user->communityPosts()->count() }}</p>
@@ -23,7 +23,7 @@
                         class="w-48 h-48 bg-indigo-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500">
                 </div>
 
-                <div class="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center">
+                <div class="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center @if($user->user_type === 'Admin') invisible @endif">
                     <button
                         class="invisible text-white py-2 px-4 uppercase rounded bg-blue-400 hover:bg-blue-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
                         Message
@@ -62,7 +62,7 @@
                             clip-rule="evenodd" />
                     </svg>
                     <p class="font-medium text-xl text-gray-600 dark:text-gray-200 ">
-                        {{ $address }}
+                        {{ $user->user_type === 'Admin' ? 'Admin' : $address }}
                     </p>
                 </div>
                 <div class="flex items center gap-3 justify-center mt-6">
@@ -73,14 +73,14 @@
                             d="M5 4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4Zm12 12V5H7v11h10Zm-5 1a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H12Z"
                             clip-rule="evenodd" />
                     </svg>
-                    <p class="font-light text-md text-gray-600 dark:text-gray-200">{{ $contact }}</p>
+                    <p class="font-light text-md text-gray-600 dark:text-gray-200">{{ $user->user_type === 'Admin' ? 'Admin' : $contact }}</p>
                 </div>
             </div>
 
             <div class="my-6 md:w-3/4 md:mx-auto">
                 <h3 class="text-center font-semibold mb-3">Bio</h3>
                 <p class="text-gray-700 dark:text-gray-200 text-center font-light lg:px-16">
-                    {{ $bio }}
+                    {{ $user->user_type === 'Admin' ? 'Admin' : $bio }}
                 </p>
             </div>
 
@@ -130,14 +130,14 @@
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First Name</label>
                             <x-input type="text" id="first-name" name="first_name" :invalid="$errors->has('first_name')"
                                 placeholder="First Name" autocomplete="on"
-                                value="{{ $user->user_type === 'Teacher' ? $user->teacherDetail->first_name : $user->studentDetail->first_name }}" />
+                                value="{{ $user->user_type === 'Teacher' ? $user->teacherDetail?->first_name : $user->studentDetail?->first_name }}" />
                         </div>
                         <div class="sm:w-1/2">
                             <label for="last-name"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last Name</label>
                             <x-input type="text" id="last-name" name="last_name" :invalid="$errors->has('last_name')"
                                 placeholder="Last Name" autocomplete="on"
-                                value="{{ $user->user_type === 'Teacher' ? $user->teacherDetail->last_name : $user->studentDetail->last_name }}" />
+                                value="{{ $user->user_type === 'Teacher' ? $user->teacherDetail?->last_name : $user->studentDetail?->last_name }}" />
                         </div>
                     </div>
                     <div class="flex space-x-3 mb-4">
@@ -152,7 +152,7 @@
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contact</label>
                             <x-input type="text" id="contact" name="contact_number" :invalid="$errors->has('contact_number')"
                                 placeholder="Contact Number" autocomplete="on"
-                                value="{{ $user->user_type === 'Teacher' ? $user->teacherDetail->contact_number : $user->studentDetail->contact_number }}" />
+                                value="{{ $user->user_type === 'Teacher' ? $user->teacherDetail?->contact_number : $user->studentDetail?->contact_number }}" />
                         </div>
                     </div>
                     <div class="mb-4">
@@ -160,7 +160,7 @@
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Address</label>
                         <x-input type="text" id="address" name="address" :invalid="$errors->has('address')"
                             placeholder="Address" autocomplete="on"
-                            value="{{ $user->user_type === 'Teacher' ? $user->teacherDetail->address : $user->studentDetail->address }}" />
+                            value="{{ $user->user_type === 'Teacher' ? $user->teacherDetail?->address : $user->studentDetail?->address }}" />
                     </div>
                     <div class="mb-4">
                         <label for="bio"

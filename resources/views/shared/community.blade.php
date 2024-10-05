@@ -63,7 +63,7 @@
                                                 </button>
                                             </li>
                                         @endcanany
-                                        @if (!$post->author_id === Auth::user()->id)
+                                        @if ($post->author_id !== Auth::user()->id)
                                             <li>
                                                 <button data-id="{{ $post->id }}" id="report-modal-{{ $post->id }}"
                                                     onclick="reportPost(this)"
