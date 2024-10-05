@@ -19,7 +19,8 @@ class TeacherDetail extends Model
         'address',
         'contact_number',
         'is_verified',
-        'file'
+        'file',
+        'bio'
     ];
 
     /** Relation */

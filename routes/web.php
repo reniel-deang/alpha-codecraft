@@ -64,7 +64,8 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
     });
 
     Route::controller(ProfileController::class)->group(function() {
-        Route::get('/profile', 'index')->name('profile');
+        Route::get('/profile/{user}', 'index')->name('profile');
+        Route::post('/profile/{user}/update', 'update')->name('profile.update');
     });
 
     Route::controller(ClassroomController::class)->group(function() {

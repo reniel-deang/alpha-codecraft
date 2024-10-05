@@ -18,7 +18,8 @@ class StudentDetail extends Model
         'last_name',
         'address',
         'contact_number',
-        'interest'
+        'interest',
+        'bio'
     ];
 
     /** Relation */

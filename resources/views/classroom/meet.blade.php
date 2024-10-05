@@ -13,8 +13,6 @@
                 userInfo: {
                     email: '{{ $user->email }}',
                     displayName: '{{ $user->name }}',
-                    avatarUrl: '{{ asset("storage/users-avatar/{$user->avatar}") }}',
-                    id: '{{ $user->id }}',
                 },
                 lang: 'en'
             };

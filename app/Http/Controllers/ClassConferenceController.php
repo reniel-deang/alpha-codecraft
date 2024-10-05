@@ -10,18 +10,10 @@ use Illuminate\Support\Facades\DB;
 
 class ClassConferenceController extends Controller
 {
-    protected $jitsiService;
-
-    public function __construct(JitsiService $jitsiService)
-    {
-        $this->jitsiService = $jitsiService;
-    }
 
     public function startMeeting(Request $request, Classroom $class, ClassConference $conference)
     {
         $user = $request->user();
-
-        //$jwt = $this->jitsiService->generateToken($user, $user->user_type, $room);
 
         return view('classroom.meet', compact('user', 'conference', 'class'));
     }

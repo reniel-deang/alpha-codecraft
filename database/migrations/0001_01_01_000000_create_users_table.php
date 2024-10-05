@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('address')->nullable();
             $table->string('contact_number')->nullable();
+            $table->string('bio')->nullable();
             $table->string('interest')->nullable();
             $table->timestamps();
         });
@@ -40,6 +41,7 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('address')->nullable();
             $table->string('contact_number')->nullable();
+            $table->string('bio')->nullable();
             $table->string('is_verified');
             $table->string('file');
             $table->timestamps();
