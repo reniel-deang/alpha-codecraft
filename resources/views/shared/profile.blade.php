@@ -49,7 +49,7 @@
                     } elseif ($user->user_type === 'Teacher') {
                         $address = $user->teacherDetail->address;
                         $contact = $user->teacherDetail->contact_number;
-                        $bio = $user->studentDetail->bio;
+                        $bio = $user->teacherDetail->bio;
                     }
                 @endphp
 
