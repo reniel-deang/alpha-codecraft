@@ -12,7 +12,7 @@
                     </div>
                     <div>
                         <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">
-                            0
+                            {{ $user->user_type === 'Student' ? $user->certificates()->count() : '' }}
                         </p>
                         <p class="text-gray-400">Certificates</p>
                     </div>

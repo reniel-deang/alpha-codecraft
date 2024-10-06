@@ -8,7 +8,6 @@ use App\Models\Enrollment;
 use App\Models\User;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
