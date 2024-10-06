@@ -6,15 +6,20 @@
                 <div class="grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0 @if(in_array($user->user_type, ['Admin', 'Teacher'])) invisible @endif">
                     <div>
                         <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">
-                            {{ $user->communityPosts()->count() }}</p>
+                            {{ $user->communityPosts()->count() }}
+                        </p>
                         <p class="text-gray-400">Moments</p>
                     </div>
                     <div>
-                        <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">10</p>
+                        <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">
+                            0
+                        </p>
                         <p class="text-gray-400">Certificates</p>
                     </div>
                     <div>
-                        <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">89h</p>
+                        <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">
+                            {{ $user->user_type === 'Student' ? Number::format($user->studentDetail?->talktime, precision: 2) : '' }}h
+                        </p>
                         <p class="text-gray-400">Talktime</p>
                     </div>
                 </div>

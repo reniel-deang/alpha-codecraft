@@ -35,12 +35,13 @@
                     _token: '{{ csrf_token() }}'
                 })
                 .then((response) => {
-                    console.log(response);
+                    setTimeout(() => {
+                        window.location.replace("{{ route('classes.view', $class) }}")
+                    }, 2000);
                 })
                 .catch((error) => {
                     console.log(error);
                 });
-                //window.location.replace("{{ route('classes.view', $class) }}")
             });
         </script>
     @endpush
