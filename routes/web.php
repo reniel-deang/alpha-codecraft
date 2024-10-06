@@ -20,19 +20,10 @@ Route::get('/', function () {
 
 
 Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
-        
-    Route::get('/landing', function() {
-        $user = request()->user();
-        if($user->user_type === 'Admin') {
-            return to_route('dashboard');
-        } else {
-            return to_route('community');
-        }
-    })->name('home');
+    
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::middleware('admin')->group(function() {
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
         Route::controller(ManageTeachersController::class)->group(function() {
             Route::get('/verified-teachers', 'verifiedTeachers')->name('verified.teachers');
             Route::get('/unverified-teachers', 'unverifiedTeachers')->name('unverified.teachers');
@@ -98,6 +89,7 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
     Route::controller(ClassConferenceController::class)->group(function() {
         Route::get('/classes/{class}/meet/{conference}', 'startMeeting')->name('classes.meet.start');
         Route::post('/classes/{class}/meet', 'createMeeting')->name('classes.meet.create');
+        Route::post('/classes/{class}/meet/{conference}/save-time/{user}', 'calculateTime')->name('classes.meet.calculate');
     });
     
     Route::controller(FindTeacherController::class)->group(function() {

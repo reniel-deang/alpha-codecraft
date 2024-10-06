@@ -11,8 +11,14 @@ class DashboardController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $user = $request->user();
+        
+        if($user->user_type !== 'Admin') {
+            return redirect(route('community'));
+        }
+        
         $data = [
             'verifiedTeacherCount' => User::teachers(true)->count(),
             'unverifiedTeacherCount' => User::teachers(false)->count(),
