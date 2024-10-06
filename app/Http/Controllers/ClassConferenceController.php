@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\ClassConference;
 use App\Models\Classroom;
+use App\Models\Enrollment;
 use App\Models\User;
+use Carbon\Carbon;
 use Firebase\JWT\JWT;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -26,7 +29,7 @@ class ClassConferenceController extends Controller
 
         $token = $this->generateToken($room, $user, $role);
 
-        return view('classroom.meet', compact('token', 'conference', 'class'));
+        return view('classroom.meet', compact('token', 'conference', 'class', 'user'));
     }
 
     /**
@@ -38,7 +41,7 @@ class ClassConferenceController extends Controller
             'conference_name' => ['required', 'string']
         ]);
 
-        $meet = DB::transaction(function() use ($title, $class) {
+        $meet = DB::transaction(function () use ($title, $class) {
             $conf = ClassConference::make($title);
             $conf->classroom()->associate($class);
             $conf->teacher()->associate($class->teacher);
@@ -47,7 +50,7 @@ class ClassConferenceController extends Controller
             return $conf;
         });
 
-        if($meet) {
+        if ($meet) {
             return response()->json([
                 'success' => true,
                 'message' => 'Class meeting successfully created.'
@@ -60,15 +63,60 @@ class ClassConferenceController extends Controller
         }
     }
 
-    public function calculateTime(Request $request, User $user)
+    public function calculateTime(Request $request, Classroom $class, ClassConference $conference, User $user)
     {
-        dd($request->all());
+        $timeJoined = Carbon::parse($request->input('time_joined'));
+        $timeLeft = Carbon::parse($request->input('time_left'));
+
+        $total = $timeJoined->diffInHours($timeLeft);
+
+        if ($user->user_type === 'Student') {
+            $enrollment = Enrollment::with('student')
+                ->where('student_id', $user->id)
+                ->where('classroom_id', $class->id)->first();
+
+            $update = DB::transaction(function () use ($user, $total, $enrollment) {
+                $totalTalktime = $user->studentDetail?->talktime;
+                $enrollmentTalktime = $enrollment->talktime;
+
+                $update = $user->studentDetail()->update([
+                    'talktime' => $totalTalktime + $total
+                ]);
+                
+                $enrollmentUpdate = $enrollment->update([
+                    'talktime' => $enrollmentTalktime + $total
+                ]);
+
+                if ($update && $enrollmentUpdate) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            if ($update) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Talktime added.'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Oops! Something went wrong.'
+                ]);
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'You are a teacher. Talktime not needed.'
+        ]);
     }
 
-    public function generateToken($room, $user, $mod) 
+    public function generateToken($room, $user, $mod)
     {
-        $appId = 'jitsi_class_app_12d93f6e';
-        $appSecret = 'b4a5f784d7b8f9e12c6a58a3b9d12345a9e8f7a6c5b4d3a2f1e8d7c9b6a5e4f3';
+        $appId = env('JITSI_APP_ID');
+        $appSecret = env('JITSI_APP_SECRET');
         $domain = 'webapi.codecraftmeet.online';
 
         $payload = [
@@ -91,5 +139,4 @@ class ClassConferenceController extends Controller
 
         return $token;
     }
-
 }

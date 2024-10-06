@@ -6,21 +6,41 @@
         <script src="https://webapi.codecraftmeet.online/external_api.js"></script>
 
         <script>
+            let joined, left;
             const domain = "webapi.codecraftmeet.online";
             const options = {
                 roomName: '{{ $conference->conference_name }}',
                 parentNode: document.querySelector('#meet'),
                 jwt: "{{ $token }}",
-                lang: 'en'
+                lang: 'en',
+                configOverwrite: {
+                    lobby: {
+                        autoKnock: true,
+                        enableChat: false
+                    }
+                }
             };
             const api = new JitsiMeetExternalAPI(domain, options);
 
             api.addEventListener('videoConferenceJoined', () => {
-                console.log('joined');
+                joined = new Date().toLocaleTimeString('en-PH');
             });
 
             api.addEventListener('videoConferenceLeft', () => {
-                window.location.replace("{{ route('classes.view', $class) }}")
+                left = new Date().toLocaleTimeString('en-PH');
+
+                axios.post("{{ route('classes.meet.calculate', ['class' => $class, 'conference' => $conference, 'user' => $user]) }}", {
+                    time_joined: joined,
+                    time_left: left,
+                    _token: '{{ csrf_token() }}'
+                })
+                .then((response) => {
+                    console.log(response);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+                //window.location.replace("{{ route('classes.view', $class) }}")
             });
         </script>
     @endpush

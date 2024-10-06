@@ -44,4 +44,9 @@ class Classroom extends Model
     {
         return $this->hasOne(ClassConference::class);
     }
+
+    public function certificate(): HasOne
+    {
+        return $this->hasOne(Certificate::class);
+    }
 }

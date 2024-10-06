@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('contact_number')->nullable();
             $table->string('bio')->nullable();
             $table->string('interest')->nullable();
+            $table->float('talktime')->default(0);
             $table->timestamps();
         });
 
@@ -63,6 +64,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('users');
+        Schema::dropIfExists('student_details');
+        Schema::dropIfExists('teacher_details');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
     }

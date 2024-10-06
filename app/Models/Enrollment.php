@@ -10,6 +10,10 @@ class Enrollment extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'talktime'
+    ];
+
     public function student(): BelongsTo
     {
         return $this->belongsTo(User::class, 'student_id');

@@ -34,5 +34,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('community_posts');
+        Schema::dropIfExists('community_post_comments');
+        
     }
 };

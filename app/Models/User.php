@@ -127,4 +127,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(ReportPost::class, 'reporter_id');
     }
 
+    public function certificates(): HasMany
+    {
+        return $this->hasMany(Certificate::class, 'student_id');
+    }
+
 }

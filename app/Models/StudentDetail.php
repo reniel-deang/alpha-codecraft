@@ -19,7 +19,8 @@ class StudentDetail extends Model
         'address',
         'contact_number',
         'interest',
-        'bio'
+        'bio',
+        'talktime'
     ];
 
     /** Relation */
