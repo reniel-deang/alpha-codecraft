@@ -24,12 +24,11 @@
                 </div>
 
                 <div class="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center @if($user->user_type === 'Admin') invisible @endif">
-                    <button
-                        class="invisible text-white py-2 px-4 uppercase rounded bg-blue-400 hover:bg-blue-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
+                    <a href="{{ route('user', $user) }}" class="@if($user->id === Auth::user()->id) invisible @endif flex items-center text-white py-2 px-4 uppercase rounded bg-blue-400 hover:bg-blue-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
                         Message
-                    </button>
+                    </a>
                     <button onclick="editProfile()"
-                        class="text-white py-2 px-4 uppercase rounded bg-gray-700 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5
+                        class="@if($user->id !== Auth::user()->id) invisible @endif text-white py-2 px-4 uppercase rounded bg-gray-700 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5
                             dark:text-white dark:bg-blue-400 dark:hover:bg-blue-500 ">
                         Edit Profile
                     </button>
@@ -79,7 +78,7 @@
 
             <div class="my-6 md:w-3/4 md:mx-auto">
                 <h3 class="text-center font-semibold mb-3">Bio</h3>
-                <p class="text-gray-700 dark:text-gray-200 text-center font-light lg:px-16">
+                <p class="text-gray-700 dark:text-gray-200 text-center font-light lg:px-16 whitespace-pre-line">
                     {{ $user->user_type === 'Admin' ? 'Admin' : $bio }}
                 </p>
             </div>
@@ -166,7 +165,7 @@
                         <label for="bio"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bio</label>
                         <x-textarea id="bio" name="bio" rows="4" :invalid="$errors->has('bio')"
-                            placeholder="Write something about you..." />
+                            placeholder="Write something about you..." :value="$user->user_type === 'Teacher' ? $user->teacherDetail?->bio : $user->studentDetail?->bio" />
                     </div>
                 </form>
 

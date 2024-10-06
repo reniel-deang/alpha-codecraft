@@ -20,8 +20,7 @@
             });
 
             api.addEventListener('videoConferenceLeft', () => {
-                console.log('left');
-                // window.location.replace("{{ route('classes.view', $class) }}")
+                window.location.replace("{{ route('classes.view', $class) }}")
             });
         </script>
     @endpush

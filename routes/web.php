@@ -8,6 +8,7 @@ use App\Http\Controllers\ClassConferenceController;
 use App\Http\Controllers\ClassPostController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CommunityPostController;
+use App\Http\Controllers\FindTeacherController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -15,14 +16,14 @@ use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->middleware('guest');
 
 
 Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
         
     Route::get('/landing', function() {
         $user = request()->user();
-        if($user && $user->user_type === 'Admin') {
+        if($user->user_type === 'Admin') {
             return to_route('dashboard');
         } else {
             return to_route('community');
@@ -99,9 +100,9 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
         Route::post('/classes/{class}/meet', 'createMeeting')->name('classes.meet.create');
     });
     
-    Route::get('/find-teachers', function() {
-        return view('student.find-teacher');
-    })->name('find.teachers');
+    Route::controller(FindTeacherController::class)->group(function() {
+        Route::get('/find-teachers', 'index')->name('find.teachers');
+    });
 
 });
 
