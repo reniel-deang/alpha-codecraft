@@ -160,10 +160,10 @@
 
                             <!-- Comment Input -->
                             <div class="mt-6">
-                                <form id="comment-form" method="POST" data-link="{{ route('community.comment', $post) }}">
+                                <form id="comment-form-{{$post->id}}" method="POST" data-link="{{ route('community.comment', $post) }}">
                                     @csrf
                                     <x-textarea name="content" placeholder="Post a comment..." rows="3" />
-                                    <button
+                                    <button type="button" onclick="comment({{$post->id}})"
                                         class="mt-3 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 px-4 py-2 rounded-md">
                                         Post Comment
                                     </button>
@@ -446,41 +446,6 @@
                         });
                     }
                 });
-
-                if ($('#comment-form').length > 0) {
-                    $('#comment-form').on('submit', (event) => {
-                        event.preventDefault();
-                        axios.post($('#comment-form').data('link'), $('#comment-form')
-                                .serialize())
-                            .then((response) => {
-                                if (response.data.success) {
-                                    location.reload();
-                                } else {
-                                    customSwal.fire({
-                                        title: 'Error',
-                                        icon: 'error',
-                                        text: response.data.message,
-                                        timer: 5000,
-                                    });
-                                }
-                            }).catch((error) => {
-                                let errMsg = $('<div></div>');
-
-                                $.each(error.response.data.errors, function() {
-                                    errMsg.append($(`<p>${$(this)[0]}</p>`));
-                                });
-
-                                if (error.status === 422) {
-                                    customSwal.fire({
-                                        title: 'Error',
-                                        icon: 'error',
-                                        html: errMsg,
-                                        timer: 5000,
-                                    });
-                                }
-                            });
-                    })
-                }
 
             })
 
@@ -821,6 +786,38 @@
                 });
                 $('#cancel-report').on('click', () => {
                     deleteModal.hide();
+                });
+            }
+
+            function comment(formId) {
+                axios.post($(`#comment-form-${formId}`).data('link'), 
+                $(`#comment-form-${formId}`).serialize())
+                .then((response) => {
+                    if (response.data.success) {
+                        location.reload();
+                    } else {
+                        customSwal.fire({
+                            title: 'Error',
+                            icon: 'error',
+                            text: response.data.message,
+                            timer: 5000,
+                        });
+                    }
+                }).catch((error) => {
+                    let errMsg = $('<div></div>');
+
+                    $.each(error.response.data.errors, function() {
+                        errMsg.append($(`<p>${$(this)[0]}</p>`));
+                    });
+
+                    if (error.status === 422) {
+                        customSwal.fire({
+                            title: 'Error',
+                            icon: 'error',
+                            html: errMsg,
+                            timer: 5000,
+                        });
+                    }
                 });
             }
         </script>
