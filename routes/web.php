@@ -99,6 +99,7 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
 });
 
 Route::get('/meet', fn() => view('sample'));
+Route::get('/cert', fn() => view('student.certificate'));
 
 //Fortify route for becoming a teacher || can't modify vendor files
 //So we extend the routes :)
