@@ -27,7 +27,7 @@
                     <div class="flex flex-col md:flex-row flex-wrap items-center justify-between">
                         <div class="flex w-full md:w-auto items-center justify-between">
                             <div class="grow">
-                                <a href=" @auth {{ route('home') }} @else / @endauth" class="flex items-center justify-between mr-4 text-lg">
+                                <a href=" @auth {{ route('dashboard') }} @else / @endauth" class="flex items-center justify-between mr-4 text-lg">
                                     <x-application-logo class="mr-3 h-8 text-black dark:text-slate-400" />
                                     <div class="leading-tight tracking-tight font-bold">
                                         <span class="text-gray-800 dark:text-gray-300">CODE</span>
