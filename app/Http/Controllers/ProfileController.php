@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Certificate;
+use App\Models\CommunityPost;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules\File;
@@ -112,5 +114,12 @@ class ProfileController extends Controller
     public function viewCertificate(User $user, Certificate $certificate)
     {
         return view('student.certificate', compact('user', 'certificate'));
+    }
+
+    public function viewMoments(User $user)
+    {
+        $fileName = 'temporary-' . Carbon::now()->format('Y-m-d-h-i-s');
+        $communityPosts = CommunityPost::with('author')->where('author_id', $user->id)->get();
+        return view('student.posts', compact('communityPosts', 'fileName'));
     }
 }

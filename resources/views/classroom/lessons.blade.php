@@ -48,7 +48,7 @@
     </div>
 
     @forelse ($class->lessons->reverse() as $lesson)
-        <div class="@if ($lesson->status === 'unpublished' && Auth::user()->user_type === 'Student') hidden @endif mb-5 relative block max-w-full p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+        <div class="@if ($lesson->status === 'unpublished' && Auth::user()->user_type === 'Student') hidden @endif mb-5 relative max-w-full p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
             <h4 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                 {{ $lesson->title }}
             </h4>

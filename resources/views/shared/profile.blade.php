@@ -4,29 +4,24 @@
             class="p-8 bg-white border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700 text-gray-700 dark:text-gray-200 shadow mt-24">
             <div class="grid grid-cols-1 md:grid-cols-3">
                 <div
-                    class="grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0 @if (in_array($user->user_type, ['Admin', 'Teacher'])) invisible @endif">
+                    class="grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0 @if ($user->user_type === 'Admin') invisible @endif">
                     <div>
-                        <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">
-                            {{ $user->communityPosts()->count() }}
-                        </p>
-                        <p class="text-gray-400">Moments</p>
+                        <a href="{{ route('profile.moments', $user) }}">
+                            <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">
+                                {{ $user->communityPosts()->count() }}
+                            </p>
+                            <p class="text-gray-400">Moments</p>
+                        </a>
                     </div>
-                    <div>
-                        @if ($user->user_type === 'Student')
-                            <a href="{{ route('profile.certificates', $user) }}">
-                                <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">
-                                    {{ $user->user_type === 'Student' ? $user->certificates()->count() : '' }}
-                                </p>
-                                <p class="text-gray-400">Certificates</p>
-                            </a>
-                        @else
+                    <div class="@if ($user->user_type === 'Teacher') invisible @endif">
+                        <a href="{{ route('profile.certificates', $user) }}">
                             <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">
                                 {{ $user->user_type === 'Student' ? $user->certificates()->count() : '' }}
                             </p>
                             <p class="text-gray-400">Certificates</p>
-                        @endif
+                        </a>
                     </div>
-                    <div>
+                    <div class="@if ($user->user_type === 'Teacher') invisible @endif">
                         <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">
                             {{ $user->user_type === 'Student' ? Number::format($user->studentDetail?->talktime, precision: 2) : '' }}h
                         </p>
@@ -111,7 +106,7 @@
                         <div class="bg-white dark:bg-gray-700 shadow-lg rounded-lg p-4 flex flex-col">
                             <div class="text-lg font-semibold text-center mb-2">{{ $day }}</div>
                             <div class="flex-grow">
-                                <p class="text-center text-gray-500">No events scheduled.</p>
+                                <p class="text-center text-gray-500">No schedule.</p>
                             </div>
                         </div>
                     @endforeach

@@ -62,6 +62,7 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
 
         Route::get('/profile/{user}/certificates', 'certificates')->name('profile.certificates');
         Route::get('/profile/{user}/certificates/view/{certificate}', 'viewCertificate')->name('profile.certificates.view');
+        Route::get('/profile/{user}/moments', 'viewMoments')->name('profile.moments');
     });
 
     Route::controller(ClassroomController::class)->group(function() {
