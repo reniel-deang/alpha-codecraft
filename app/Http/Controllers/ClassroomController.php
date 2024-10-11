@@ -19,14 +19,14 @@ class ClassroomController extends Controller
     public function index()
     {
         $user = Auth::user();
-        
+
         $classrooms = Classroom::whereRelation('teacher', 'teacher_id', $user->id)->get();
         $enrollments = Classroom::whereRelation('enrollments', 'student_id', $user->id)->get();
-        
+
         return view('shared.classroom', compact('classrooms', 'enrollments'));
     }
 
-    public function view(Classroom $class)
+    public function viewPosts(Classroom $class)
     {
         $students = User::with('studentDetail')
             ->where('user_type', 'Student')
@@ -34,7 +34,35 @@ class ClassroomController extends Controller
                 $query->where('classroom_id', $class->id);
             })->get();
 
-        return view('classroom.classroom', compact('class', 'students'));
+        return view('classroom.posts', compact('class', 'students'));
+    }
+
+    public function viewLessons(Classroom $class)
+    {
+        $students = User::with('studentDetail')
+            ->where('user_type', 'Student')
+            ->whereDoesntHave('enrollments', function (Builder $query) use ($class) {
+                $query->where('classroom_id', $class->id);
+            })->get();
+
+        return view('classroom.lessons', compact('class', 'students'));
+    }
+
+    public function viewParticipants(Classroom $class)
+    {
+        $students = User::with('studentDetail')
+            ->where('user_type', 'Student')
+            ->whereDoesntHave('enrollments', function (Builder $query) use ($class) {
+                $query->where('classroom_id', $class->id);
+            })->get();
+
+        $enrolled = User::with('enrollments')
+            ->where('user_type', 'Student')
+            ->whereHas('enrollments', function (Builder $query) use ($class) {
+                $query->where('classroom_id', $class->id);
+            })->get();
+
+        return view('classroom.participants', compact('class', 'students', 'enrolled'));
     }
 
     public function create(Request $request, User $user)
@@ -45,7 +73,7 @@ class ClassroomController extends Controller
             'description' => ['sometimes', 'nullable', 'string']
         ]);
 
-        $classroom = DB::transaction(function() use ($validated, $user) {
+        $classroom = DB::transaction(function () use ($validated, $user) {
             $validated['code'] = str()->random(6);
 
             $classroom = $user->classrooms()->create($validated);
@@ -53,7 +81,7 @@ class ClassroomController extends Controller
             return $classroom;
         });
 
-        if($classroom) {
+        if ($classroom) {
             return response()->json([
                 'success' => true,
                 'message' => 'Classroom successfully created.'
@@ -74,14 +102,14 @@ class ClassroomController extends Controller
             'description' => ['sometimes', 'nullable', 'string']
         ]);
 
-        $updateClass = DB::transaction(function() use ($validated, $class) {
+        $updateClass = DB::transaction(function () use ($validated, $class) {
 
             $update = $class->update($validated);
 
             return $update;
         });
 
-        if($updateClass) {
+        if ($updateClass) {
             return response()->json([
                 'success' => true,
                 'message' => 'Classroom successfully updated.'
@@ -96,14 +124,14 @@ class ClassroomController extends Controller
 
     public function delete(Classroom $class)
     {
-        $deleteClass = DB::transaction(function() use ($class) {
+        $deleteClass = DB::transaction(function () use ($class) {
 
             $delete = $class->delete();
 
             return $delete;
         });
 
-        if($deleteClass) {
+        if ($deleteClass) {
             return response()->json([
                 'success' => true,
                 'message' => 'Classroom successfully deleted.'
@@ -139,7 +167,7 @@ class ClassroomController extends Controller
             }
         }
 
-        $joins = DB::transaction(function() use ($classroom, $user) {
+        $joins = DB::transaction(function () use ($classroom, $user) {
             $class = Enrollment::make();
             $class->student()->associate($user);
             $class->classroom()->associate($classroom);
@@ -149,7 +177,7 @@ class ClassroomController extends Controller
             return $class;
         });
 
-        if($joins) {
+        if ($joins) {
             return response()->json([
                 'success' => true,
                 'message' => 'You have joined the classroom.'
@@ -165,19 +193,19 @@ class ClassroomController extends Controller
     public function leave(Classroom $class)
     {
         $student = request()->user();
-        
+
         $enrollment = Enrollment::with('student')
             ->whereRelation('student', 'student_id', $student->id)
             ->whereRelation('classroom', 'classroom_id', $class->id)
             ->first();
 
-        $classroom = DB::transaction(function() use ($enrollment) {
+        $classroom = DB::transaction(function () use ($enrollment) {
             $opt = $enrollment->delete();
 
             return $opt;
         });
 
-        if($classroom) {
+        if ($classroom) {
             return response()->json([
                 'success' => true,
                 'message' => 'You have left the classroom.'
@@ -205,7 +233,7 @@ class ClassroomController extends Controller
             ->whereIn('email', $validated['emails'])
             ->get();
 
-        
+
 
         foreach ($users as $user) {
             $invites = [
@@ -227,7 +255,7 @@ class ClassroomController extends Controller
     {
         $classroom = Classroom::where('code', $code)->first();
         $enrollment = Enrollment::where('student_id', $user)->where('classroom_id', $classroom?->id)->first();
-        
+
         if (!$classroom) {
             return response()->json([
                 'message' => 'No class found with the provided code.'
@@ -240,7 +268,7 @@ class ClassroomController extends Controller
             }
         }
 
-        $joins = DB::transaction(function() use ($classroom, $user) {
+        $joins = DB::transaction(function () use ($classroom, $user) {
             $class = Enrollment::make();
             $class->student()->associate($user);
             $class->classroom()->associate($classroom);
@@ -250,7 +278,7 @@ class ClassroomController extends Controller
             return $class;
         });
 
-        if($joins) {
+        if ($joins) {
             return to_route('classes');
         } else {
             return response()->json([

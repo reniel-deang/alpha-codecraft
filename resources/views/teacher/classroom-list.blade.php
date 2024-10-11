@@ -94,10 +94,10 @@
             <div class="hidden md:col-span-5 md:mt-0 md:flex">
                 <img class="dark:hidden"
                     src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/girl-shopping-list.svg"
-                    alt="shopping illustration" />
+                    alt="Student Illustration" />
                 <img class="hidden dark:block"
                     src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/girl-shopping-list-dark.svg"
-                    alt="shopping illustration" />
+                    alt="Student Illustration" />
             </div>
         </div>
     @endif

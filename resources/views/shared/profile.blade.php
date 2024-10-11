@@ -3,7 +3,8 @@
         <div
             class="p-8 bg-white border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700 text-gray-700 dark:text-gray-200 shadow mt-24">
             <div class="grid grid-cols-1 md:grid-cols-3">
-                <div class="grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0 @if(in_array($user->user_type, ['Admin', 'Teacher'])) invisible @endif">
+                <div
+                    class="grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0 @if (in_array($user->user_type, ['Admin', 'Teacher'])) invisible @endif">
                     <div>
                         <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">
                             {{ $user->communityPosts()->count() }}
@@ -25,15 +26,17 @@
                 </div>
                 <div class="relative">
                     <img src="{{ asset("storage/users-avatar/{$user->avatar}") }}" alt=""
-                        class="w-48 h-48 bg-indigo-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500">
+                        class="w-48 h-48 bg-indigo-100 mx-auto rounded-full shadow-2xl object-cover absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500">
                 </div>
 
-                <div class="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center @if($user->user_type === 'Admin') invisible @endif">
-                    <a href="{{ route('user', $user) }}" class="@if($user->id === Auth::user()->id) invisible @endif flex items-center text-white py-2 px-4 uppercase rounded bg-blue-400 hover:bg-blue-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
+                <div
+                    class="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center @if ($user->user_type === 'Admin') invisible @endif">
+                    <a href="{{ route('user', $user) }}"
+                        class="@if ($user->id === Auth::user()->id) invisible @endif flex items-center text-white py-2 px-4 uppercase rounded bg-blue-400 hover:bg-blue-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
                         Message
                     </a>
                     <button onclick="editProfile()"
-                        class="@if($user->id !== Auth::user()->id) invisible @endif text-white py-2 px-4 uppercase rounded bg-gray-700 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5
+                        class="@if ($user->id !== Auth::user()->id) invisible @endif text-white py-2 px-4 uppercase rounded bg-gray-700 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5
                             dark:text-white dark:bg-blue-400 dark:hover:bg-blue-500 ">
                         Edit Profile
                     </button>
@@ -77,7 +80,8 @@
                             d="M5 4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4Zm12 12V5H7v11h10Zm-5 1a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H12Z"
                             clip-rule="evenodd" />
                     </svg>
-                    <p class="font-light text-md text-gray-600 dark:text-gray-200">{{ $user->user_type === 'Admin' ? 'Admin' : $contact }}</p>
+                    <p class="font-light text-md text-gray-600 dark:text-gray-200">
+                        {{ $user->user_type === 'Admin' ? 'Admin' : $contact }}</p>
                 </div>
             </div>
 
@@ -89,6 +93,23 @@
             </div>
 
         </div>
+
+        @if ($user->user_type === 'Teacher')
+            <div class="container mx-auto mt-5 text-gray-700 dark:text-gray-200">
+                <h1 class="text-2xl font-bold mb-6 text-center">Weekly Schedule</h1>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
+                    @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day)
+                        <div class="bg-white dark:bg-gray-700 shadow-lg rounded-lg p-4 flex flex-col">
+                            <div class="text-lg font-semibold text-center mb-2">{{ $day }}</div>
+                            <div class="flex-grow">
+                                <p class="text-center text-gray-500">No events scheduled.</p>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
     </main>
 
     <div id="edit-profile-modal" tabindex="-1" aria-hidden="true"
@@ -125,7 +146,8 @@
                                 src="{{ $user->avatar ? asset("storage/users-avatar/{$user->avatar}") : asset('storage/users-avatar/avatar.png') }}"
                                 class="w-32 h-32 rounded-full border object-cover border-gray-300 mr-4"
                                 alt="Profile Picture">
-                            <x-input-file id="profile-pic" name="avatar" class="hidden" onchange="previewImage(event)" />
+                            <x-input-file id="profile-pic" name="avatar" class="hidden"
+                                onchange="previewImage(event)" />
                         </div>
                     </div>
                     <div class="sm:flex sm:space-x-2 mb-4">
@@ -221,43 +243,43 @@
                         let form = document.querySelector('#edit-profile-form');
                         let data = new FormData(form);
                         axios.postForm($('#edit-profile-form').data('link'), data)
-                        .then((response) => {
-                            if (response.data.success) {
-                                customSwal.fire({
-                                    title: 'Success',
-                                    icon: 'success',
-                                    text: response.data.message,
-                                    timer: 5000,
-                                    didClose: () => {
-                                        modal.hide();
-                                        location.reload();
-                                    }
-                                });
-                            } else {
-                                customSwal.fire({
-                                    title: 'Error',
-                                    icon: 'error',
-                                    text: response.data.message,
-                                    timer: 5000,
-                                });
-                            }
-                        })
-                        .catch((error) => {
-                            let errMsg = $('<div></div>');
+                            .then((response) => {
+                                if (response.data.success) {
+                                    customSwal.fire({
+                                        title: 'Success',
+                                        icon: 'success',
+                                        text: response.data.message,
+                                        timer: 5000,
+                                        didClose: () => {
+                                            modal.hide();
+                                            location.reload();
+                                        }
+                                    });
+                                } else {
+                                    customSwal.fire({
+                                        title: 'Error',
+                                        icon: 'error',
+                                        text: response.data.message,
+                                        timer: 5000,
+                                    });
+                                }
+                            })
+                            .catch((error) => {
+                                let errMsg = $('<div></div>');
 
-                            $.each(error.response.data.errors, function() {
-                                errMsg.append($(`<p>${$(this)[0]}</p>`));
+                                $.each(error.response.data.errors, function() {
+                                    errMsg.append($(`<p>${$(this)[0]}</p>`));
+                                });
+
+                                if (error.status === 422) {
+                                    customSwal.fire({
+                                        title: 'Error',
+                                        icon: 'error',
+                                        html: errMsg,
+                                        timer: 5000,
+                                    });
+                                }
                             });
-
-                            if (error.status === 422) {
-                                customSwal.fire({
-                                    title: 'Error',
-                                    icon: 'error',
-                                    html: errMsg,
-                                    timer: 5000,
-                                });
-                            }
-                        });
                     }, 1000);
                 });
 

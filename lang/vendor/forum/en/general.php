@@ -18,7 +18,7 @@ return [
     'edit' => 'Edit',
     'editing' => "You're editing :item",
     'home_title' => 'Forum',
-    'index' => 'Index',
+    'index' => 'Forum',
     'invalid_selection' => 'Invalid selection',
     'last_updated' => 'Last updated',
     'manage' => 'Manage',

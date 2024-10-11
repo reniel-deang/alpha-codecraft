@@ -9,6 +9,7 @@ use App\Http\Controllers\ClassPostController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CommunityPostController;
 use App\Http\Controllers\FindTeacherController;
+use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -72,7 +73,10 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
         Route::delete('/classes/leave/{class}', 'leave')->name('classes.leave');
 
         //Shared
-        Route::get('/classes/{class}', 'view')->name('classes.view');
+        Route::get('/classes/{class}/posts', 'viewPosts')->name('classes.view');
+        Route::get('/classes/{class}/lessons', 'viewLessons')->name('classes.view.lessons');
+        Route::get('/classes/{class}/participants', 'viewParticipants')->name('classes.view.participants');
+
         Route::post('/classes/{class}/invite', 'invite')->name('classes.invite');
 
         Route::get('/classes/{code}/{user}', 'inviteLink')->name('classes.email.invite');
@@ -86,6 +90,16 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
         Route::post('/classes/{class}/post/{post}/comment', 'comment')->name('classes.post.comment');
     });
 
+    Route::controller(LessonController::class)->group(function () {
+        Route::post('/classes/{class}/lesson', 'save')->name('classes.lesson.save');
+
+        Route::post('/classes/{class}/lesson/{lesson}/add-section', 'addSection')->name('classes.lesson.add.section');
+        Route::post('/classes/{class}/lesson/{lesson}/publish', 'publishLesson')->name('classes.lesson.publish');
+
+        Route::get('/classes/{class}/lesson/{lesson}/view-lesson', 'viewLesson')->name('classes.lesson.view.section');
+        Route::post('/classes/{class}/lesson/{lesson}/mark-as-done/{section}', 'markAsDone')->name('classes.lesson.section.mark');
+    });
+
     Route::controller(ClassConferenceController::class)->group(function() {
         Route::get('/classes/{class}/meet/{conference}', 'startMeeting')->name('classes.meet.start');
         Route::post('/classes/{class}/meet', 'createMeeting')->name('classes.meet.create');
@@ -97,9 +111,6 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
     });
 
 });
-
-Route::get('/meet', fn() => view('sample'));
-Route::get('/cert', fn() => view('student.certificate'));
 
 //Fortify route for becoming a teacher || can't modify vendor files
 //So we extend the routes :)
@@ -115,7 +126,7 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
         if($request->user()->user_type === 'Teacher' && !$request->user()->teacherDetail->is_verified) {
             return view('auth.teacher-approval-prompt');
         } else {
-            return to_route('home');
+            return to_route('dashboard');
         }
     })
     ->middleware(['auth:'.config('fortify.guard')])

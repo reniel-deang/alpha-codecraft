@@ -37,7 +37,7 @@
                     class="flex mx-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
                     id="user-menu-button" aria-expanded="false" data-dropdown-toggle="dropdown">
                     <span class="sr-only">Open user menu</span>
-                    <img class="w-8 h-8 rounded-full" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}"
+                    <img class="w-8 h-8 rounded-full object-cover" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}"
                         alt="user photo" />
                 </button>
                 <!-- Dropdown menu -->

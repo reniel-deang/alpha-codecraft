@@ -49,4 +49,9 @@ class Classroom extends Model
     {
         return $this->hasOne(Certificate::class);
     }
+
+    public function lessons(): HasMany
+    {
+        return $this->hasMany(Lesson::class);
+    }
 }

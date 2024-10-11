@@ -16,7 +16,7 @@
 
         @stack('styles')
     </head>
-    <body class="antialiased bg-gray-50 dark:bg-gray-900">
+    <body class="antialiased bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
 
         {{-- @include('layouts.navbar') --}}
         @includeUnless(request()->routeIs('classes.meet.start'), 'layouts.navbar')

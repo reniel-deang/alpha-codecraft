@@ -17,7 +17,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             @foreach ($teachers as $teacher)
                                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                                    <img class="w-24 h-24 rounded-full mx-auto"
+                                    <img class="w-24 h-24 rounded-full mx-auto object-cover"
                                         src="{{ asset("storage/users-avatar/{$teacher->avatar}") }}" alt="Bonnie Green">
                                     <div class="text-center mt-4">
                                         <h2 class="text-lg font-bold dark:text-white">{{ $teacher->name }}</h2>
