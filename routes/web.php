@@ -59,6 +59,9 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
     Route::controller(ProfileController::class)->group(function() {
         Route::get('/profile/{user}', 'index')->name('profile');
         Route::post('/profile/{user}/update', 'update')->name('profile.update');
+
+        Route::get('/profile/{user}/certificates', 'certificates')->name('profile.certificates');
+        Route::get('/profile/{user}/certificates/view/{certificate}', 'viewCertificate')->name('profile.certificates.view');
     });
 
     Route::controller(ClassroomController::class)->group(function() {

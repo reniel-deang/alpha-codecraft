@@ -120,7 +120,11 @@
                             <a href="{{ route('classes.lesson.view.section', [$class, $lesson]) }}"
                                 class="inline-flex justify-center items-center rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                                 @if ($lesson->progress()->where('student_id', Auth::user()->id)->first())
-                                    Continue
+                                    @if ($lesson->certificate()->where('student_id', Auth::user()->id)->first())
+                                        View Lesson
+                                    @else
+                                        Continue
+                                    @endif
                                 @else 
                                     Start
                                 @endif

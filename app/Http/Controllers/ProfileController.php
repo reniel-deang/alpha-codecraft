@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Certificate;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -100,5 +101,16 @@ class ProfileController extends Controller
                 'message' => 'Oops! Something went wrong.'
             ]);
         }
+    }
+
+    public function certificates(User $user)
+    {
+        $certificates = $user->certificates()->get();
+        return view('student.certificates', compact('user', 'certificates'));
+    }
+
+    public function viewCertificate(User $user, Certificate $certificate)
+    {
+        return view('student.certificate', compact('user', 'certificate'));
     }
 }

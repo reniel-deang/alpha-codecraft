@@ -12,10 +12,19 @@
                         <p class="text-gray-400">Moments</p>
                     </div>
                     <div>
-                        <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">
-                            {{ $user->user_type === 'Student' ? $user->certificates()->count() : '' }}
-                        </p>
-                        <p class="text-gray-400">Certificates</p>
+                        @if ($user->user_type === 'Student')
+                            <a href="{{ route('profile.certificates', $user) }}">
+                                <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">
+                                    {{ $user->user_type === 'Student' ? $user->certificates()->count() : '' }}
+                                </p>
+                                <p class="text-gray-400">Certificates</p>
+                            </a>
+                        @else
+                            <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">
+                                {{ $user->user_type === 'Student' ? $user->certificates()->count() : '' }}
+                            </p>
+                            <p class="text-gray-400">Certificates</p>
+                        @endif
                     </div>
                     <div>
                         <p class="font-bold text-gray-700 dark:text-gray-200 text-xl">
