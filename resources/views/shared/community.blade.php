@@ -89,7 +89,7 @@
                         </h3>
 
                         <!-- Post Content -->
-                        <p class="text-gray-700 dark:text-gray-200 leading-relaxed mb-6">
+                        <p class="text-gray-700 dark:text-gray-200 leading-relaxed mb-6 whitespace-pre-line">
                             {{ $post->content }}
                         </p>
 
