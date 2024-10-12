@@ -32,11 +32,14 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
             Route::get('/get-teachers/{condition}', 'teachersList')->name('get.teachers');
             Route::get('/view-file/{file}', 'viewFile')->name('view.teacher_id');
             Route::post('/verify-teacher', 'verifyTeacher')->name('verify.teacher');
+
+            Route::get('/get-teacher/{user}', 'getTeacher')->name('get.teacher');
         });
         
         Route::controller(ManageStudentsController::class)->group(function() {
             Route::get('/students', 'index')->name('students.index');
             Route::get('/get-students', 'getStudents')->name('get.students');
+            Route::get('/get-student/{user}', 'getStudent')->name('get.student');
         });
 
         Route::controller(ManageReportController::class)->group(function() {

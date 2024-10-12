@@ -36,4 +36,16 @@ class ManageStudentsController extends Controller
             'data' => $data
         ]);
     }
+
+    public function getStudent(User $user)
+    {
+        $data = [
+            'name' => $user->name,
+            'email' => $user->email,
+            'contact_number' => $user->studentDetail?->contact_number,
+            'address' => $user->studentDetail?->address
+        ];
+
+        return response()->json($data);
+    }
 }

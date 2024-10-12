@@ -114,4 +114,16 @@ class ManageTeachersController extends Controller
 
         
     }
+
+    public function getTeacher(User $user)
+    {
+        $data = [
+            'name' => $user->name,
+            'email' => $user->email,
+            'contact_number' => $user->teacherDetail?->contact_number,
+            'address' => $user->teacherDetail?->address
+        ];
+
+        return response()->json($data);
+    }
 }
