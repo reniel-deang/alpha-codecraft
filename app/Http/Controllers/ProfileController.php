@@ -122,4 +122,29 @@ class ProfileController extends Controller
         $communityPosts = CommunityPost::with('author')->where('author_id', $user->id)->get();
         return view('student.posts', compact('communityPosts', 'fileName'));
     }
+
+    public function setSchedule(Request $request, User $user)
+    {
+        $schedules = $request->validate([
+            'schedules' => ['required']
+        ]);
+
+        if ($user->user_type === 'Teacher') {
+            $update = $user->teacherDetail()->update([
+                'schedules' => $schedules['schedules']
+            ]);
+        }
+
+        if ($update) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Schedules updated successfully.'
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops! Something went wrong.'
+            ]);
+        }
+    }
 }

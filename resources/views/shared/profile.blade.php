@@ -100,16 +100,44 @@
 
         @if ($user->user_type === 'Teacher')
             <div class="container mx-auto mt-5 text-gray-700 dark:text-gray-200">
-                <h1 class="text-2xl font-bold mb-6 text-center">Weekly Schedule</h1>
+                <div class="flex justify-center items-center mb-6">
+                    <h1 class="text-2xl font-bold">Weekly Schedule</h1>
+                    @if ($user->id === Auth::user()->id)
+                        <button onclick="setSchedule(this)" data-link="{{ route('profile.set.schedule', $user) }}"
+                            class="ml-auto inline-block rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                            Set Schedule
+                        </button>
+                    @endif
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
-                    @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day)
-                        <div class="bg-white dark:bg-gray-700 shadow-lg rounded-lg p-4 flex flex-col">
-                            <div class="text-lg font-semibold text-center mb-2">{{ $day }}</div>
-                            <div class="flex-grow">
-                                <p class="text-center text-gray-500">No schedule.</p>
+                    @if ($user->teacherDetail?->schedules)
+                        @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day)
+                            @if (in_array($day, $user->teacherDetail?->schedules))
+                                <div class="bg-green-500 shadow-lg rounded-lg p-4 flex flex-col">
+                                    <div class="text-lg font-semibold text-center mb-2">{{ $day }}</div>
+                                    <div class="flex-grow">
+                                        <p class="text-center text-gray-200">Available.</p>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="bg-red-500 shadow-lg rounded-lg p-4 flex flex-col">
+                                    <div class="text-lg font-semibold text-center mb-2">{{ $day }}</div>
+                                    <div class="flex-grow">
+                                        <p class="text-center text-gray-200">Not Available.</p>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    @else
+                        @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day)
+                            <div class="bg-white dark:bg-gray-700 shadow-lg rounded-lg p-4 flex flex-col">
+                                <div class="text-lg font-semibold text-center mb-2">{{ $day }}</div>
+                                <div class="flex-grow">
+                                    <p class="text-center text-gray-500">No set schedule yet.</p>
+                                </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    @endif
                 </div>
             </div>
         @endif
@@ -210,6 +238,93 @@
         </div>
     </div>
 
+    <div id="schedule-modal" tabindex="-1" aria-hidden="true"
+        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-lg max-h-full">
+            <!-- Modal content -->
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <!-- Modal header -->
+                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        Set Schedule
+                    </h3>
+                    <button id="schedule-close" type="button"
+                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                    </button>
+                </div>
+                <!-- Modal body -->
+                <form id="schedule-form" class="p-4 md:p-5" method="POST">
+                    @csrf
+
+                    <div class="mb-4">
+                        <span class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Set your schedule base on the day you are available.</span>
+                    </div>
+
+                    <div class="flex items-center mb-4">
+                        <input id="monday" type="checkbox" name="schedules[]" value="Monday" @checked($user->user_type === 'Teacher' && in_array('Monday', $user->teacherDetail?->schedules))
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="monday" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Monday</label>
+                    </div>
+
+                    <div class="flex items-center mb-4">
+                        <input id="tuesday" type="checkbox" name="schedules[]" value="Tuesday" @checked($user->user_type === 'Teacher' && in_array('Tuesday', $user->teacherDetail?->schedules)) 
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="tuesday" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Tuesday</label>
+                    </div>
+
+                    <div class="flex items-center mb-4">
+                        <input id="wednesday" type="checkbox" name="schedules[]" value="Wednesday" @checked($user->user_type === 'Teacher' && in_array('Wednesday', $user->teacherDetail?->schedules)) 
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="wednesday" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Wednesday</label>
+                    </div>
+
+                    <div class="flex items-center mb-4">
+                        <input id="thursday" type="checkbox" name="schedules[]" value="Thursday" @checked($user->user_type === 'Teacher' && in_array('Thursday', $user->teacherDetail?->schedules)) 
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="thursday" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Thursday</label>
+                    </div>
+
+                    <div class="flex items-center mb-4">
+                        <input id="friday" type="checkbox" name="schedules[]" value="Friday" @checked($user->user_type === 'Teacher' && in_array('Friday', $user->teacherDetail?->schedules)) 
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="friday" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Friday</label>
+                    </div>
+
+                    <div class="flex items-center mb-4">
+                        <input id="saturday" type="checkbox" name="schedules[]" value="Saturday" @checked($user->user_type === 'Teacher' && in_array('Saturday', $user->teacherDetail?->schedules)) 
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="saturday" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Saturday</label>
+                    </div>
+
+                    <div class="flex items-center mb-4">
+                        <input id="sunday" type="checkbox" name="schedules[]" value="Sunday" @checked($user->user_type === 'Teacher' && in_array('Sunday', $user->teacherDetail?->schedules)) 
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="sunday" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Sunday</label>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit"
+                            class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            Save schedule
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
         <script>
             // Preview profile picture
@@ -288,6 +403,78 @@
                 });
 
                 $('#edit-modal-close').on('click', () => {
+                    modal.hide();
+                })
+            }
+
+            function setSchedule(element) {
+                const $targetEl = document.querySelector('#schedule-modal');
+                const options = {
+                    backdrop: 'static',
+                    closable: false
+                };
+                const instanceOption = {
+                    id: 'schedule-modal',
+                    override: true
+                };
+                const modal = new Modal($targetEl, options, instanceOption);
+
+                modal.show();
+
+                $('#schedule-form').data('link', $(element).data('link'));
+
+                $('#schedule-form').on('submit', (event) => {
+                    event.preventDefault();
+                    customSwal.fire({
+                        text: 'Updating Schedule. Please wait...',
+                        allowOutsideClick: false,
+                    });
+                    customSwal.showLoading();
+                    setTimeout(() => {
+                        let form = document.querySelector('#schedule-form');
+                        let data = new FormData(form);
+                        axios.postForm($('#schedule-form').data('link'), data)
+                            .then((response) => {
+                                if (response.data.success) {
+                                    customSwal.fire({
+                                        title: 'Success',
+                                        icon: 'success',
+                                        text: response.data.message,
+                                        timer: 5000,
+                                        didClose: () => {
+                                            modal.hide();
+                                            location.reload();
+                                        }
+                                    });
+                                } else {
+                                    customSwal.fire({
+                                        title: 'Error',
+                                        icon: 'error',
+                                        text: response.data.message,
+                                        timer: 5000,
+                                    });
+                                }
+                            })
+                            .catch((error) => {
+                                let errMsg = $('<div></div>');
+
+                                $.each(error.response.data.errors, function() {
+                                    errMsg.append($(`<p>${$(this)[0]}</p>`));
+                                });
+
+                                if (error.status === 422) {
+                                    customSwal.fire({
+                                        title: 'Error',
+                                        icon: 'error',
+                                        html: errMsg,
+                                        timer: 5000,
+                                    });
+                                }
+                            });
+                    }, 1000);
+                });
+
+                $('#schedule-close').on('click', () => {
                     modal.hide();
                 })
             }

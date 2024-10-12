@@ -20,8 +20,16 @@ class TeacherDetail extends Model
         'contact_number',
         'is_verified',
         'file',
-        'bio'
+        'bio',
+        'schedules'
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'schedules' => 'array'
+        ];
+    }
 
     /** Relation */
     public function user(): BelongsTo

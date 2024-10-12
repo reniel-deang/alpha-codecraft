@@ -103,7 +103,7 @@
                                     @if ($loop->iteration === 3 && $post->communityPostAttachments->count() > 4)
                                         <div class="relative">
                                             <img src="{{ asset("storage/{$post->communityPostAttachments[$loop->iteration + 1]?->path}") }}"
-                                                alt="Group photo 6" class="rounded-lg object-cover h-full">
+                                                alt="Post Image" class="rounded-lg object-cover h-full">
                                             <div
                                                 class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white font-bold text-xl">
                                                 + {{ $loop->remaining }}
