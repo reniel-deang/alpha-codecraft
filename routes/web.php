@@ -47,7 +47,7 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
             Route::get('/get-reported-posts', 'getReportedPosts')->name('get.reported.posts');
 
             Route::get('/get-reported-posts/view/{post}', 'getReportedPost')->name('get.reported');
-            Route::post('/get-reported-posts/delete/{post}', 'removePost')->name('reported.remove');
+            Route::delete('/get-reported-posts/delete/{post}', 'removePost')->name('reported.remove');
         });
     });
 

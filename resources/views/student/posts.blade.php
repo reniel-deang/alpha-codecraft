@@ -2,175 +2,195 @@
     <main class="py-16 px-6 md:p-16 md:min-h-screen">
         @if ($communityPosts->count() > 0)
             @foreach ($communityPosts as $post)
-                <div
-                    class="max-w-4xl mx-auto mb-10 p-6 antialiased bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                    <!-- Post Header -->
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center">
-                            <img src="{{ asset("storage/users-avatar/{$post->author?->avatar}") }}" alt="Teacher Avatar"
-                                class="w-12 h-12 rounded-full object-cover">
-                            <div class="ml-3">
-                                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
-                                    {{ $post->author?->name }}</h2>
-                                <p class="text-gray-600 dark:text-gray-300 text-sm">Posted on
-                                    {{ $post->created_at?->format('F d, Y - h:i a') }} <br>
-                                    @if ($post->created_at->notEqualTo($post->updated_at))
-                                        (Edited)
-                                    @endif
-                                </p>
-                            </div>
-                        </div>
-                        <div class="ms-auto w-1/4">
-                            <button id="dropdown-button-{{ $post->id }}"
-                                data-dropdown-toggle="dropdown-{{ $post->id }}"
-                                class="inline-block float-right text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5"
-                                type="button">
-                                <span class="sr-only">Open dropdown</span>
-                                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                    fill="currentColor" viewBox="0 0 16 3">
-                                    <path
-                                        d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
-                                </svg>
-                            </button>
-                            <!-- Dropdown menu -->
-                            <div id="dropdown-{{ $post->id }}"
-                                class="z-10 hidden text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-                                <ul class="py-2" aria-labelledby="dropdown-button-{{ $post->id }}">
-                                    @canany(['update', 'delete'], $post)
-                                        <li>
-                                            <button data-link="{{ route('community.post.update', $post) }}"
-                                                data-id="{{ $post->id }}" onclick="editPost(this)"
-                                                class="block w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                                                data-post="{{ $post->title }}" data-content="{{ $post->content }}"
-                                                data-attachments="{{ $post->communityPostAttachments }}">
-                                                Edit
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button data-id="{{ $post->id }}" id="delete-modal-{{ $post->id }}"
-                                                onclick="deletePost(this)"
-                                                data-link="{{ route('community.post.delete', $post) }}"
-                                                class="block w-full text-start px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                                                Delete
-                                            </button>
-                                        </li>
-                                    @endcanany
-                                    @if ($post->author_id !== Auth::user()->id)
-                                        <li>
-                                            <button data-id="{{ $post->id }}"
-                                                id="report-modal-{{ $post->id }}" onclick="reportPost(this)"
-                                                data-link="{{ route('community.report', $post) }}"
-                                                class="block w-full text-start px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                                                Report
-                                            </button>
-                                        </li>
-                                    @endif
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Post Title -->
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                        {{ $post->title }}
-                    </h3>
-
-                    <!-- Post Content -->
-                    <p class="text-gray-700 dark:text-gray-200 leading-relaxed mb-6">
-                        {{ $post->content }}
-                    </p>
-
-                    @if ($post->communityPostAttachments->count() > 0)
-                        <div class="grid @if ($post->communityPostAttachments->count() > 2) grid-rows-2 grid-flow-col @endif gap-2">
-                            @foreach ($post->communityPostAttachments as $postAttachment)
-                                <div class="relative @if ($loop->iteration === 3 && $post->communityPostAttachments->count() < 4) row-span-2 @endif">
-                                    <img src="{{ asset("storage/{$postAttachment->path}") }}" alt="Group photo 1"
-                                        class="rounded-lg object-cover h-full">
+                @if (!$post->reports()->where('reporter_id', Auth::user()->id)->where('community_post_id', $post->id)->first())
+                    <div
+                        class="max-w-4xl mx-auto mb-10 p-6 antialiased bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                        <!-- Post Header -->
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <img src="{{ asset("storage/users-avatar/{$post->author?->avatar}") }}" alt="Teacher Avatar"
+                                    class="w-12 h-12 rounded-full object-cover">
+                                <div class="ml-3">
+                                    <a href="{{ route('profile', $post->author) }}" class="hover:underline">
+                                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
+                                            {{ $post->author?->name }}
+                                        </h2>
+                                    </a>
+                                    <p class="text-gray-600 dark:text-gray-300 text-sm">Posted on
+                                        {{ $post->created_at?->format('F d, Y - h:i a') }} <br>
+                                        @if ($post->created_at->notEqualTo($post->updated_at))
+                                            (Edited)
+                                        @endif
+                                    </p>
                                 </div>
-                                @if ($loop->iteration === 3 && $post->communityPostAttachments->count() > 4)
-                                    <div class="relative">
-                                        <img src="{{ asset("storage/{$post->communityPostAttachments[$loop->iteration + 1]?->path}") }}"
-                                            alt="Group photo 6" class="rounded-lg object-cover h-full">
-                                        <div
-                                            class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white font-bold text-xl">
-                                            + {{ $loop->remaining }}
+                            </div>
+                            <div class="ms-auto w-1/4">
+                                <button id="dropdown-button-{{ $post->id }}"
+                                    data-dropdown-toggle="dropdown-{{ $post->id }}"
+                                    class="inline-block float-right text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5"
+                                    type="button">
+                                    <span class="sr-only">Open dropdown</span>
+                                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                        fill="currentColor" viewBox="0 0 16 3">
+                                        <path
+                                            d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
+                                    </svg>
+                                </button>
+                                <!-- Dropdown menu -->
+                                <div id="dropdown-{{ $post->id }}"
+                                    class="z-10 hidden text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                                    <ul class="py-2" aria-labelledby="dropdown-button-{{ $post->id }}">
+                                        @canany(['update', 'delete'], $post)
+                                            <li>
+                                                <button data-link="{{ route('community.post.update', $post) }}"
+                                                    data-id="{{ $post->id }}" onclick="editPost(this)"
+                                                    class="block w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                                                    data-post="{{ $post->title }}" data-content="{{ $post->content }}"
+                                                    data-attachments="{{ $post->communityPostAttachments }}">
+                                                    Edit
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button data-id="{{ $post->id }}" id="delete-modal-{{ $post->id }}"
+                                                    onclick="deletePost(this)"
+                                                    data-link="{{ route('community.post.delete', $post) }}"
+                                                    class="block w-full text-start px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                                    Delete
+                                                </button>
+                                            </li>
+                                        @endcanany
+                                        @if ($post->author_id !== Auth::user()->id)
+                                            <li>
+                                                <button data-id="{{ $post->id }}"
+                                                    id="report-modal-{{ $post->id }}" onclick="reportPost(this)"
+                                                    data-link="{{ route('community.report', $post) }}"
+                                                    class="block w-full text-start px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                                    Report
+                                                </button>
+                                            </li>
+                                        @endif
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Post Title -->
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+                            {{ $post->title }}
+                        </h3>
+
+                        <!-- Post Content -->
+                        <p class="text-gray-700 dark:text-gray-200 leading-relaxed mb-6">
+                            {{ $post->content }}
+                        </p>
+
+                        @if ($post->communityPostAttachments->count() > 0)
+                            <div class="grid @if ($post->communityPostAttachments->count() > 2) grid-rows-2 grid-flow-col @endif gap-2">
+                                @foreach ($post->communityPostAttachments as $postAttachment)
+                                    <div class="relative @if ($loop->iteration === 3 && $post->communityPostAttachments->count() < 4) row-span-2 @endif">
+                                        <img src="{{ asset("storage/{$postAttachment->path}") }}" alt="Group photo 1"
+                                            class="rounded-lg object-cover h-full">
+                                    </div>
+                                    @if ($loop->iteration === 3 && $post->communityPostAttachments->count() > 4)
+                                        <div class="relative">
+                                            <img src="{{ asset("storage/{$post->communityPostAttachments[$loop->iteration + 1]?->path}") }}"
+                                                alt="Group photo 6" class="rounded-lg object-cover h-full">
+                                            <div
+                                                class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white font-bold text-xl">
+                                                + {{ $loop->remaining }}
+                                            </div>
+                                        </div>
+                                        @break
+                                    @endif
+                                @endforeach
+                            </div>
+                        @endif
+
+                        <!-- Post Actions -->
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex space-x-4">
+                                <button class="text-gray-500 dark:text-gray-300 hover:text-blue-500 flex items-center">
+                                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 10h18M3 6h18M3 14h18M3 18h18"></path>
+                                    </svg>
+                                    Comment
+                                </button>
+                            </div>
+                            <span class="text-gray-600 dark:text-gray-300 text-sm">{{ $post->comments->count() }}
+                                Comments</span>
+                        </div>
+
+                        <!-- Comments Section -->
+                        <div class="border-t pt-4">
+                            <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Comments</h4>
+
+                            <!-- Single Comment -->
+                            @forelse ($post->comments as $comment)
+                                <div class="flex items-start mb-4">
+                                    <img src="{{ asset("storage/users-avatar/{$comment->author?->avatar}") }}"
+                                        alt="Student Avatar" class="w-10 h-10 rounded-full mr-3 object-cover">
+                                    <div class="w-3/4">
+                                        <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
+                                            <h5 class="font-semibold text-gray-900 dark:text-gray-100">
+                                                {{ $comment->author->name }}
+                                            </h5>
+                                            <p class="text-gray-700 dark:text-gray-200">
+                                                {{ $comment->content }}
+                                            </p>
+                                        </div>
+                                        <div class="flex space-x-3 text-sm text-gray-500 dark:text-gray-400 mt-2">
+                                            <button class="hover:text-blue-500">Commented</button>
+                                            <span>•</span>
+                                            <span>{{ $comment->created_at->diffForHumans() }}</span>
                                         </div>
                                     </div>
-                                    @break
-                                @endif
-                            @endforeach
-                        </div>
-                    @endif
-
-                    <!-- Post Actions -->
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="flex space-x-4">
-                            <button class="text-gray-500 dark:text-gray-300 hover:text-blue-500 flex items-center">
-                                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M3 10h18M3 6h18M3 14h18M3 18h18"></path>
-                                </svg>
-                                Comment
-                            </button>
-                        </div>
-                        <span class="text-gray-600 dark:text-gray-300 text-sm">{{ $post->comments->count() }}
-                            Comments</span>
-                    </div>
-
-                    <!-- Comments Section -->
-                    <div class="border-t pt-4">
-                        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Comments</h4>
-
-                        <!-- Single Comment -->
-                        @forelse ($post->comments as $comment)
-                            <div class="flex items-start mb-4">
-                                <img src="{{ asset("storage/users-avatar/{$comment->author?->avatar}") }}"
-                                    alt="Student Avatar" class="w-10 h-10 rounded-full mr-3 object-cover">
-                                <div class="w-3/4">
-                                    <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
-                                        <h5 class="font-semibold text-gray-900 dark:text-gray-100">
-                                            {{ $comment->author->name }}
-                                        </h5>
-                                        <p class="text-gray-700 dark:text-gray-200">
-                                            {{ $comment->content }}
-                                        </p>
-                                    </div>
-                                    <div class="flex space-x-3 text-sm text-gray-500 dark:text-gray-400 mt-2">
-                                        <button class="hover:text-blue-500">Commented</button>
-                                        <span>•</span>
-                                        <span>{{ $comment->created_at->diffForHumans() }}</span>
-                                    </div>
                                 </div>
-                            </div>
-                        @empty
-                            <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center">
-                                <p class="text-gray-500 dark:text-gray-100 text-sm">
-                                    No comments yet.
-                                </p>
-                            </div>
-                        @endforelse
+                            @empty
+                                <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center">
+                                    <p class="text-gray-500 dark:text-gray-100 text-sm">
+                                        No comments yet.
+                                    </p>
+                                </div>
+                            @endforelse
 
-                        <!-- Comment Input -->
-                        <div class="mt-6">
-                            <form id="comment-form-{{ $post->id }}" method="POST"
-                                data-link="{{ route('community.comment', $post) }}">
-                                @csrf
-                                <x-textarea name="content" placeholder="Post a comment..." rows="3" />
-                                <button type="button" onclick="comment({{ $post->id }})"
-                                    class="mt-3 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 px-4 py-2 rounded-md">
-                                    Post Comment
-                                </button>
-                            </form>
+                            <!-- Comment Input -->
+                            <div class="mt-6">
+                                <form id="comment-form-{{ $post->id }}" method="POST"
+                                    data-link="{{ route('community.comment', $post) }}">
+                                    @csrf
+                                    <x-textarea name="content" placeholder="Post a comment..." rows="3" />
+                                    <button type="button" onclick="comment({{ $post->id }})"
+                                        class="mt-3 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 px-4 py-2 rounded-md">
+                                        Post Comment
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div id="image-preview" class="flex flex-wrap mt-4">
-                    @foreach ($post->communityPostAttachments as $upload)
-                        <input type="hidden" class="uploaded-file-{{ $upload->community_post_id }}"
-                            data-name="{{ $upload->original_name }}" value="{{ asset("storage/{$upload->path}") }}">
-                    @endforeach
-                </div>
+                    <div id="image-preview" class="flex flex-wrap mt-4">
+                        @foreach ($post->communityPostAttachments as $upload)
+                            <input type="hidden" class="uploaded-file-{{ $upload->community_post_id }}"
+                                data-name="{{ $upload->original_name }}" value="{{ asset("storage/{$upload->path}") }}">
+                        @endforeach
+                    </div>
+                @endif
             @endforeach
+        @else
+            <section class="bg-white dark:bg-gray-900">
+                <div class="py-8 px-4 mx-auto max-w-screen-md text-center lg:py-16 lg:px-12">
+                    <svg class="mx-auto mb-4 w-12 h-12 text-gray-700 dark:text-gray-400" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                        viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m8 8-4 4 4 4m8 0 4-4-4-4m-2-3-4 14" />
+                    </svg>
+                    <h1
+                        class="mb-4 text-4xl font-bold tracking-tight leading-none text-gray-900 lg:mb-6 dark:text-white">
+                        No Community Posts Yet
+                    </h1>
+                </div>
+            </section>
         @endif
     </main>
 

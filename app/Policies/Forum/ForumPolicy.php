@@ -8,10 +8,7 @@ class ForumPolicy
 {
     public function createCategories(User $user): bool
     {
-        if($user->user_type === 'Teacher' && !$user->teacherDetail->is_verified) {
-            return false;
-        }
-        return true;
+        return $user->user_type === 'Admin';
     }
 
     public function moveCategories(User $user): bool
@@ -26,14 +23,7 @@ class ForumPolicy
 
     public function deleteCategories(User $user): bool
     {
-        if(in_array($user->user_type, ['Admin', 'Teacher'])) {
-            if($user->user_type === 'Teacher' && !$user->teacherDetail->is_verified) {
-                return false;
-            }
-            return true;
-        } else {
-            return false;
-        }
+        return $user->user_type === 'Admin';
     }
 
     public function markThreadsAsRead(User $user): bool

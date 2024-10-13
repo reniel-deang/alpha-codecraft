@@ -35,3 +35,21 @@ import { Dropzone } from "dropzone";
 import 'dropzone/dist/dropzone.css';
 window.Dropzone = Dropzone;
 // const dropzone = new Dropzone("#dropzone", { url: "/file/post" });
+
+// import Echo from 'laravel-echo';
+// import Pusher from 'pusher-js';
+// window.Pusher = Pusher;
+
+// window.Echo = new Echo({
+//     broadcaster: 'pusher',
+//     key: import.meta.env.VITE_PUSHER_APP_KEY,
+//     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
+//     encrypted: true
+// });
+
+// window.Echo.private(`chatify`)
+//     .listen('NewMessageNotification', (event) => {
+//         console.log(event);
+//         // Handle the notification (display popup, sound, etc.)
+//         alert(`New message from ${event.message.sender_name}: ${event.message.content}`);
+//     });

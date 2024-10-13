@@ -23,8 +23,11 @@
                                 <img src="{{ asset("storage/users-avatar/{$post->author?->avatar}") }}"
                                     alt="Teacher Avatar" class="w-12 h-12 rounded-full object-cover">
                                 <div class="ml-3">
-                                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
-                                        {{ $post->author?->name }}</h2>
+                                    <a href="{{ route('profile', $post->author) }}" class="hover:underline">
+                                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
+                                            {{ $post->author?->name }}
+                                        </h2>
+                                    </a>
                                     <p class="text-gray-600 dark:text-gray-300 text-sm">Posted on
                                         {{ $post->created_at?->format('F d, Y - h:i a') }} <br>
                                         @if ($post->created_at->notEqualTo($post->updated_at))
