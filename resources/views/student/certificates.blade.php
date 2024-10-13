@@ -1,5 +1,5 @@
 <x-app-layout>
-    <main class="py-8 antialiased md:py-16 md:max-w-screen-xl md:mx-auto">
+    <main class="py-8 antialiased md:py-16 md:max-w-screen-xl md:mx-auto {{ Auth::user()->user_type === 'Admin' ? 'p-4 md:ml-64 h-auto pt-20' : '' }}">
         <div class="py-8 antialiased md:py-8">
             @forelse ($certificates as $certificate)
                 <div

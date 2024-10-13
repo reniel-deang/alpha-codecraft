@@ -1,5 +1,5 @@
 <x-app-layout>
-    <main class="p-16 {{ $user->user_type === 'Admin' ? 'p-4 md:ml-64 h-auto pt-20' : '' }}">
+    <main class="p-16 {{ Auth::user()->user_type === 'Admin' ? 'p-4 md:ml-64 h-auto pt-20' : '' }}">
         <div
             class="p-8 bg-white border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700 text-gray-700 dark:text-gray-200 shadow mt-24">
             <div class="grid grid-cols-1 md:grid-cols-3">

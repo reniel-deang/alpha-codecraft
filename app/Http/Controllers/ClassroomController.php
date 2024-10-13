@@ -286,4 +286,27 @@ class ClassroomController extends Controller
             ]);
         }
     }
+
+    public function kickStudent(Classroom $class, User $student)
+    {
+        $enrollment = $student->enrollments()->where('classroom_id', $class->id)->first();
+
+        $kick = DB::transaction(function () use ($enrollment) {
+            $status = $enrollment->delete();
+
+            return $status;
+        });
+
+        if ($kick) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Student has been kicked.'
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops! Something went wrong.'
+            ]);
+        }
+    }
 }

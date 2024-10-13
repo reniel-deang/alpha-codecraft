@@ -1,5 +1,5 @@
 <x-app-layout>
-    <main class="py-16 px-6 md:p-16 md:min-h-screen">
+    <main class="py-16 px-6 md:p-16 md:min-h-screen {{ Auth::user()->user_type === 'Admin' ? 'p-4 md:ml-64 h-auto pt-20' : '' }}">
         @if ($communityPosts->count() > 0)
             @foreach ($communityPosts as $post)
                 @if (!$post->reports()->where('reporter_id', Auth::user()->id)->where('community_post_id', $post->id)->first())

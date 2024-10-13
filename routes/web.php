@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ManageReportController;
 use App\Http\Controllers\Admin\ManageStudentsController;
 use App\Http\Controllers\Admin\ManageTeachersController;
+use App\Http\Controllers\Admin\ManageUsersController;
 use App\Http\Controllers\ClassConferenceController;
 use App\Http\Controllers\ClassPostController;
 use App\Http\Controllers\ClassroomController;
@@ -49,6 +50,14 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
             Route::get('/get-reported-posts/view/{post}', 'getReportedPost')->name('get.reported');
             Route::delete('/get-reported-posts/delete/{post}', 'removePost')->name('reported.remove');
         });
+
+        Route::controller(ManageUsersController::class)->group(function() {
+            Route::get('/users', 'index')->name('users.index');
+
+            Route::post('/users/{user}/send-warning', 'sendWarning')->name('users.send.warning');
+            Route::post('/users/{user}/ban', 'banUser')->name('users.ban');
+            Route::post('/users/{user}/delete', 'deleteUser')->name('users.delete');
+        });
     });
 
     Route::controller(CommunityPostController::class)->group(function() {
@@ -85,13 +94,15 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
         Route::delete('/classes/leave/{class}', 'leave')->name('classes.leave');
 
         //Shared
-        Route::get('/classes/{class}/posts', 'viewPosts')->name('classes.view');
+        Route::get('/classes/{class}/posts', 'viewPosts')->can('view', 'class')->name('classes.view');
         Route::get('/classes/{class}/lessons', 'viewLessons')->name('classes.view.lessons');
         Route::get('/classes/{class}/participants', 'viewParticipants')->name('classes.view.participants');
 
         Route::post('/classes/{class}/invite', 'invite')->name('classes.invite');
 
         Route::get('/classes/{code}/{user}', 'inviteLink')->name('classes.email.invite');
+
+        Route::delete('/classes/{class}/kick/{student}', 'kickStudent')->name('classes.kick.student');
     });
 
     Route::controller(ClassPostController::class)->group(function() {

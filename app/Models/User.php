@@ -24,7 +24,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'user_type',
-        'avatar'
+        'avatar',
+        'ban_effective'
     ];
 
     /**
@@ -45,6 +46,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected function casts(): array
     {
         return [
+            'ban_effective' => 'date',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];

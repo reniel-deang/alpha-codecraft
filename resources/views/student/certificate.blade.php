@@ -1,6 +1,6 @@
 <x-app-layout>
 
-    <main class="py-8 antialiased md:py-16 md:max-w-screen-xl md:mx-auto">
+    <main class="py-8 antialiased md:py-16 md:max-w-screen-xl md:mx-auto {{ Auth::user()->user_type === 'Admin' ? 'p-4 md:ml-64 h-auto pt-20' : '' }}">
         <div id="certificate"
             class="text-gray-900 max-w-5xl w-full mx-auto certificate border-4 border-gray-400 py-8 px-16 bg-white shadow-lg rounded-lg">
 

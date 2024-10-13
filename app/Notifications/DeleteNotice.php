@@ -7,17 +7,17 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SendInvite extends Notification implements ShouldQueue
+class DeleteNotice extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected $data;
+    protected $data = [];
     /**
      * Create a new notification instance.
      */
-    public function __construct($message)
+    public function __construct($data)
     {
-        $this->data = $message;
+        $this->data = $data;
     }
 
     /**
@@ -36,8 +36,8 @@ class SendInvite extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->subject('Class Invitation')
-                    ->markdown('mail.class.invite', ['data' => $this->data]);
+                    ->subject('Account Removal Notice')
+                    ->markdown('mail.admin.delete-notice', ['data' => $this->data]);
     }
 
     /**

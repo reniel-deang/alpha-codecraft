@@ -66,6 +66,8 @@
         @yield('posts-modal')
     @elseif (request()->routeIs('classes.view.lessons'))
         @yield('lessons-modal')
+    @elseif (request()->routeIs('classes.view.participants'))
+        @yield('participants-modal')
     @endif
 
     <!-- Create meet modal -->
