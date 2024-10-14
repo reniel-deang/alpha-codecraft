@@ -39,7 +39,7 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::authenticateUsing(function (Request $request) {
             $user = User::where('email', $request->email)->first();
 
-            if ($user->ban_effective && !$user->ban_effective->lessThan(Carbon::now())) {
+            if ($user && $user->ban_effective && !$user->ban_effective?->lessThan(Carbon::now())) {
                 return false;
             }
 

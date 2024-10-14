@@ -13,9 +13,16 @@ class ClassroomPolicy
      */
     public function view(User $user, Classroom $classroom): bool
     {
-        $enrollment = $user->enrollments()->where('classroom_id', $classroom->id)->first();
+        if ($user->user_type === 'Student') {
+            $enrollment = $user->enrollments()->where('classroom_id', $classroom->id)->first();
+            return $enrollment ? true : false;
+        }
 
-        return $enrollment ? true : false;
+        if ($user->user_type === 'Teacher') {
+            return $classroom->teacher_id === $user->id;
+        }
+
+        return true;
     }
 
     /**

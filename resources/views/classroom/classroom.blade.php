@@ -96,7 +96,7 @@
                     @csrf
                     <div class="mb-4">
                         <x-input-label for="conference_name" :label="__('Meet Title')" />
-                        <x-input id="conference_name" name="conference_name" placeholder="Meet title" :invalid="$errors->has('conference_name')"
+                        <x-input id="conference_name" oninput="noSpaceChar(this)" name="conference_name" placeholder="Meet title" :invalid="$errors->has('conference_name')"
                             required />
                     </div>
 

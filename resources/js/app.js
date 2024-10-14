@@ -7,6 +7,12 @@ function numericOnly(element) {
 }
 window.numericOnly = numericOnly;
 
+function noSpaceChar(element) {
+    const inputValue = element.value.replace(/\s/g, "_");
+    element.value = inputValue;
+}
+window.noSpaceChar = noSpaceChar;
+
 function teacherAction(action, teacher) {
     let config;
 

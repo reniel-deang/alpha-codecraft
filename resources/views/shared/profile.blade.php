@@ -91,9 +91,7 @@
 
             <div class="my-6 md:w-3/4 md:mx-auto">
                 <h3 class="text-center font-semibold mb-3">Bio</h3>
-                <p class="text-gray-700 dark:text-gray-200 text-center font-light lg:px-16 whitespace-pre-line">
-                    {{ $user->user_type === 'Admin' ? 'Admin' : $bio }}
-                </p>
+                <p class="text-gray-700 dark:text-gray-200 text-center font-light lg:px-16 whitespace-pre-line">{{ $user->user_type === 'Admin' ? 'Admin' : $bio }}</p>
             </div>
 
         </div>

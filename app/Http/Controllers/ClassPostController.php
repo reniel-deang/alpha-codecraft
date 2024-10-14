@@ -92,23 +92,69 @@ class ClassPostController extends Controller
 
     public function comment(Request $request, Classroom $class, ClassPost $post)
     {
-        $validated = $request->validate([
-            'content' => ['required', 'string']
-        ]);
-        $user = $request->user();
+        if ($request->input('comment')) {
+            $comment = Comment::findOrFail($request->input('comment'));
+            
+            $validated = $request->validate([
+                'content' => ['required', 'string']
+            ]);
 
-        $comment = DB::transaction(function() use ($post, $user, $validated) {
-            $content = $post->comments()->make($validated);
-            $content->author()->associate($user);
+            $update = DB::transaction(function () use ($comment, $validated) {
+                $content = $comment->update($validated);
+                return $content;
+            });
+    
+            if ($update) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Comment successfully posted.'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Oops! Something went wrong.'
+                ]);
+            }
+        } else {
+            $validated = $request->validate([
+                'content' => ['required', 'string']
+            ]);
+            $user = $request->user();
+    
+            $comment = DB::transaction(function () use ($post, $user, $validated) {
+                $content = $post->comments()->make($validated);
+                $content->author()->associate($user);
+    
+                $content->save();
+                return $content;
+            });
+    
+            if ($comment) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Comment successfully posted.'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Oops! Something went wrong.'
+                ]);
+            }
+        }
+    }
 
-            $content->save();
-            return $content;
+    public function deleteComment(Classroom $class, ClassPost $post, Comment $comment)
+    {
+        $deleteComment = DB::transaction(function () use ($comment) {
+            $delete = $comment->delete();
+
+            return $delete;
         });
 
-        if($comment) {
+        if ($deleteComment) {
             return response()->json([
                 'success' => true,
-                'message' => 'Comment successfully posted.'
+                'message' => 'Comment successfully deleted.'
             ]);
         } else {
             return response()->json([

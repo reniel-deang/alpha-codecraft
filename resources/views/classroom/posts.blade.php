@@ -109,9 +109,7 @@
             </h3>
 
             <!-- Post Content -->
-            <p class="text-gray-700 dark:text-gray-200 leading-relaxed mb-6">
-                {{ $post->content }}
-            </p>
+            <p class="text-gray-700 dark:text-gray-200 leading-relaxed mb-6 whitespace-pre-line">{{ $post->content }}</p>
 
             <!-- Post Actions -->
             <div class="flex items-center justify-between mb-6">
@@ -142,14 +140,35 @@
                                 <h5 class="font-semibold text-gray-900 dark:text-gray-100">
                                     {{ $comment->author->name }}
                                 </h5>
-                                <p class="text-gray-700 dark:text-gray-200">
-                                    {{ $comment->content }}
-                                </p>
+                                <p id="comment-{{$comment->id}}" class="text-gray-700 dark:text-gray-200 whitespace-pre-line">{{ $comment->content }}</p>
                             </div>
                             <div class="flex space-x-3 text-sm text-gray-500 dark:text-gray-400 mt-2">
                                 <button class="hover:text-blue-500">Commented</button>
+                                @canany(['update', 'delete'], $comment)
+                                    <button id="edit-comment-btn-{{$comment->id}}" type="button"
+                                        onclick="editComment({{ $comment->id }}, {{ $post->id }})"
+                                        class="hover:text-blue-500">
+                                        Edit
+                                    </button>
+                                    <button id="cancel-edit-comment-btn-{{$comment->id}}" type="button"
+                                        onclick="cancelEditComment({{ $comment->id }}, {{ $post->id }})"
+                                        class="hover:text-blue-500 hidden">
+                                        Cancel
+                                    </button>
+                                    <button type="button" 
+                                        onclick="deleteComment(this)"
+                                        data-link="{{ route('classes.post.comment.delete', [$class, $post, $comment]) }}"
+                                        class="hover:text-blue-500">
+                                        Delete
+                                    </button>
+                                @endcanany
                                 <span>•</span>
-                                <span>{{ $comment->created_at->diffForHumans() }}</span>
+                                <span>
+                                    {{ $comment->created_at->diffForHumans() }}
+                                    @if ($comment->created_at->notEqualTo($comment->updated_at))
+                                        (Edited)
+                                    @endif
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -166,8 +185,9 @@
                     <form id="comment-form-{{ $post->id }}" method="POST"
                         data-link="{{ route('classes.post.comment', [$class, $post]) }}">
                         @csrf
+                        <input type="hidden" name="comment">
                         <x-textarea name="content" placeholder="Post a comment..." rows="3" />
-                        <button type="button" onclick="comment({{ $post->id }})"
+                        <button id="comment-btn-{{$post->id}}" type="button" onclick="postComment({{ $post->id }})"
                             class="mt-3 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 px-4 py-2 rounded-md">
                             Post Comment
                         </button>
@@ -327,6 +347,44 @@
                         Yes, I'm sure
                     </button>
                     <button id="cancel-delete" type="button"
+                        class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">No,
+                        cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+    <div id="delete-comment-modal" tabindex="-1"
+        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-md max-h-full">
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <button id="delete-comment-close" type="button"
+                    class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+                <div class="p-4 md:p-5 text-center">
+                    <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to
+                        delete
+                        this comment?</h3>
+                    <form id="delete-comment-form" class="hidden">
+                        @csrf
+                        @method('DELETE')
+                    </form>
+                    <button form="delete-comment-form" type="submit"
+                        class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                        Yes, I'm sure
+                    </button>
+                    <button id="cancel-comment-delete" type="button"
                         class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">No,
                         cancel</button>
                 </div>
@@ -557,7 +615,8 @@
         }
 
 
-        function comment(formId) {
+        function postComment(formId) {
+            $(`#comment-btn-${formId}`).prop('disabled', true);
             axios.post($(`#comment-form-${formId}`).data('link'),
                     $(`#comment-form-${formId}`).serialize())
                 .then((response) => {
@@ -569,9 +628,14 @@
                             icon: 'error',
                             text: response.data.message,
                             timer: 5000,
+                            didClose: () => {    
+                                $(`#comment-btn-${formId}`).prop('disabled', false);
+                            }
                         });
                     }
                 }).catch((error) => {
+                    $(`#comment-btn-${formId}`).prop('disabled', false);
+
                     let errMsg = $('<div></div>');
 
                     $.each(error.response.data.errors, function() {
@@ -587,6 +651,94 @@
                         });
                     }
                 });
+        }
+
+        function editComment(commentId, postId) {
+            let comment = $(`#comment-${commentId}`).text();
+            $(`#edit-comment-btn-${commentId}`).text('Editing');
+            $(`#cancel-edit-comment-btn-${commentId}`).removeClass('hidden');
+            $(`#comment-form-${postId}`).find('textarea').val($.trim(comment));
+            $(`#comment-form-${postId}`).find('input[name="comment"]').val(commentId);
+        }
+
+        function cancelEditComment(commentId, postId) {
+            $(`#comment-form-${postId}`).find('textarea').val(null);
+            $(`#comment-form-${postId}`).find('input[name="comment"]').val(null);
+            $(`#edit-comment-btn-${commentId}`).text('Edit');
+            $(`#cancel-edit-comment-btn-${commentId}`).addClass('hidden');
+        }
+
+        function deleteComment(element) {
+            const $delTargetEl = document.querySelector('#delete-comment-modal');
+            const delOptions = {
+                backdrop: 'static',
+                closable: false,
+            };
+            const delInstanceOption = {
+                id: 'delete-comment-modal',
+                override: true
+            };
+            const deleteModal = new Modal($delTargetEl, delOptions, delInstanceOption);
+
+            deleteModal.show();
+
+            $('#delete-comment-form').data('link', $(element).data('link'));
+
+            $('#delete-comment-form').on('submit', (event) => {
+                event.preventDefault();
+                customSwal.fire({
+                    title: 'Deleting comment. Please wait...',
+                    allowOutsideClick: false
+                });
+                customSwal.showLoading();
+                setTimeout(() => {
+                    axios.delete($('#delete-comment-form').data('link'))
+                        .then((response) => {
+                            if (response.data.success) {
+                                customSwal.fire({
+                                    title: 'Success',
+                                    icon: 'success',
+                                    text: response.data.message,
+                                    timer: 5000,
+                                    didClose: () => {
+                                        deleteModal.hide();
+                                        location.reload();
+                                    }
+                                });
+                            } else {
+                                customSwal.fire({
+                                    title: 'Error',
+                                    icon: 'error',
+                                    text: response.data.message,
+                                    timer: 5000,
+                                });
+                            }
+                        }).catch((error) => {
+                            let errMsg = $('<div></div>');
+
+                            $.each(error.response.data.errors, function() {
+                                errMsg.append($(`<p>${$(this)[0]}</p>`));
+                            });
+
+                            if (error.status === 422) {
+                                customSwal.fire({
+                                    title: 'Error',
+                                    icon: 'error',
+                                    html: errMsg,
+                                    timer: 5000,
+                                });
+                            }
+                        });
+                }, 1000);
+            });
+
+            $('#delete-comment-close').on('click', () => {
+                deleteModal.hide();
+            });
+            $('#cancel-comment-delete').on('click', () => {
+                deleteModal.hide();
+            });
+
         }
     </script>
 @endpush

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CommunityPost;
 use App\Models\CommunityPostAttachment;
+use App\Models\CommunityPostComment;
 use App\Models\ReportPost;
 use App\Models\TemporaryDelete;
 use App\Models\TemporaryUpload;
@@ -145,29 +146,54 @@ class CommunityPostController extends Controller
 
     public function comment(Request $request, CommunityPost $post)
     {
-        $validated = $request->validate([
-            'content' => ['required', 'string']
-        ]);
-        $user = $request->user();
+        if ($request->input('comment')) {
+            $comment = CommunityPostComment::findOrFail($request->input('comment'));
 
-        $comment = DB::transaction(function () use ($post, $user, $validated) {
-            $content = $post->comments()->make($validated);
-            $content->author()->associate($user);
-
-            $content->save();
-            return $content;
-        });
-
-        if ($comment) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Comment successfully posted.'
+            $validated = $request->validate([
+                'content' => ['required', 'string']
             ]);
+
+            $update = DB::transaction(function () use ($comment, $validated) {
+                $content = $comment->update($validated);
+                return $content;
+            });
+    
+            if ($update) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Comment successfully posted.'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Oops! Something went wrong.'
+                ]);
+            }
         } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Oops! Something went wrong.'
+            $validated = $request->validate([
+                'content' => ['required', 'string']
             ]);
+            $user = $request->user();
+    
+            $comment = DB::transaction(function () use ($post, $user, $validated) {
+                $content = $post->comments()->make($validated);
+                $content->author()->associate($user);
+    
+                $content->save();
+                return $content;
+            });
+    
+            if ($comment) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Comment successfully posted.'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Oops! Something went wrong.'
+                ]);
+            }
         }
     }
 
@@ -241,5 +267,39 @@ class CommunityPostController extends Controller
             }
         }
         return response()->json(['success' => 'Files removed successfully']);
+    }
+
+    public function deleteComment(CommunityPost $post, CommunityPostComment $comment)
+    {
+        $deleteComment = DB::transaction(function () use ($comment) {
+            $delete = $comment->delete();
+
+            return $delete;
+        });
+
+        if ($deleteComment) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Comment successfully deleted.'
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops! Something went wrong.'
+            ]);
+        }
+    }
+
+    public function getAttachments(CommunityPost $post)
+    {
+        $attachments = $post->communityPostAttachments()->get();
+        $data = [];
+        if ($attachments) {
+            foreach ($attachments as $attachment) {
+                array_push($data, $attachment->path);
+            }
+        }
+
+        return response()->json($data);
     }
 }

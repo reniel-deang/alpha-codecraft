@@ -36,7 +36,7 @@
                                         </p>
 
                                         <div data-popover id="popover-{{ $teacher->id }}" role="tooltip"
-                                            class="absolute z-10 invisible inline-block text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 w-96 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
+                                            class="absolute z-10 invisible inline-block text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 sm:w-96 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
                                             <div class="p-3 space-y-2">
                                                 <h3 class="font-semibold text-gray-900 dark:text-white">
                                                     Bio

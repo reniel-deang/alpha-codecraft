@@ -92,23 +92,19 @@
                         </h3>
 
                         <!-- Post Content -->
-                        <p class="text-gray-700 dark:text-gray-200 leading-relaxed mb-6 whitespace-pre-line">
-                            {{ $post->content }}
-                        </p>
+                        <p class="text-gray-700 dark:text-gray-200 leading-relaxed mb-6 whitespace-pre-line">{{ $post->content }}</p>
 
                         @if ($post->communityPostAttachments->count() > 0)
                             <div class="grid @if ($post->communityPostAttachments->count() > 2) grid-rows-2 grid-flow-col @endif gap-2">
                                 @foreach ($post->communityPostAttachments as $postAttachment)
                                     <div class="relative @if ($loop->iteration === 3 && $post->communityPostAttachments->count() < 4) row-span-2 @endif">
-                                        <img src="{{ asset("storage/{$postAttachment->path}") }}" alt="Group photo 1"
-                                            class="rounded-lg object-cover h-full">
+                                        <img onclick="openPostAttachment(this)" data-link="{{ route('posts.attachments.view', $post) }}" src="{{ asset("storage/{$postAttachment->path}") }}" alt="Group photo 1" class="rounded-lg object-cover h-full hover:cursor-pointer">
                                     </div>
                                     @if ($loop->iteration === 3 && $post->communityPostAttachments->count() > 4)
                                         <div class="relative">
-                                            <img src="{{ asset("storage/{$post->communityPostAttachments[$loop->iteration + 1]?->path}") }}"
-                                                alt="Post Image" class="rounded-lg object-cover h-full">
-                                            <div
-                                                class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white font-bold text-xl">
+                                            <img src="{{ asset("storage/{$post->communityPostAttachments[$loop->iteration + 1]?->path}") }}" alt="Post Image" class="rounded-lg object-cover h-full">
+                                            <div onclick="openPostAttachment(this)" data-link="{{ route('posts.attachments.view', $post) }}"
+                                                class="hover:cursor-pointer absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white font-bold text-xl">
                                                 + {{ $loop->remaining }}
                                             </div>
                                         </div>
@@ -147,14 +143,36 @@
                                         <h5 class="font-semibold text-gray-900 dark:text-gray-100">
                                             {{ $comment->author->name }}
                                         </h5>
-                                        <p class="text-gray-700 dark:text-gray-200">
-                                            {{ $comment->content }}
-                                        </p>
+                                        <p id="comment-{{ $comment->id }}" class="text-gray-700 dark:text-gray-200 whitespace-pre-line">{{ $comment->content }}</p>
                                     </div>
                                     <div class="flex space-x-3 text-sm text-gray-500 dark:text-gray-400 mt-2">
                                         <button class="hover:text-blue-500">Commented</button>
+                                        @canany(['update', 'delete'], $comment)
+                                            <button id="edit-comment-btn-{{$comment->id}}" type="button"
+                                                onclick="editComment({{ $comment->id }}, {{ $post->id }})"
+                                                class="hover:text-blue-500">
+                                                Edit
+                                            </button>
+                                            <button id="cancel-edit-comment-btn-{{$comment->id}}" type="button"
+                                                onclick="cancelEditComment({{ $comment->id }}, {{ $post->id }})"
+                                                class="hover:text-blue-500 hidden">
+                                                Cancel
+                                            </button>
+                                            <button type="button" 
+                                                onclick="deleteComment(this)"
+                                                data-link="{{ route('community.comment.delete', [$post, $comment]) }}"
+                                                class="hover:text-blue-500">
+                                                Delete
+                                            </button>
+                                        @endcanany
                                         <span>•</span>
-                                        <span>{{ $comment->created_at->diffForHumans() }}</span>
+                                        <span>
+                                            {{ $comment->created_at->diffForHumans() }}
+                                            @if ($comment->created_at->notEqualTo($comment->updated_at))
+                                                (Edited)
+                                            @endif
+                                        </span>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -171,8 +189,9 @@
                             <form id="comment-form-{{ $post->id }}" method="POST"
                                 data-link="{{ route('community.comment', $post) }}">
                                 @csrf
+                                <input type="hidden" name="comment">
                                 <x-textarea name="content" placeholder="Post a comment..." rows="3" />
-                                <button type="button" onclick="comment({{ $post->id }})"
+                                <button id="comment-btn-{{$post->id}}" type="button" onclick="postComment({{ $post->id }})"
                                     class="mt-3 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 px-4 py-2 rounded-md">
                                     Post Comment
                                 </button>
@@ -378,6 +397,45 @@
     </div>
 </div>
 
+
+<div id="delete-comment-modal" tabindex="-1"
+    class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <button id="delete-comment-close" type="button"
+                class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+            <div class="p-4 md:p-5 text-center">
+                <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to
+                    delete
+                    this comment?</h3>
+                <form id="delete-comment-form" class="hidden">
+                    @csrf
+                    @method('DELETE')
+                </form>
+                <button form="delete-comment-form" type="submit"
+                    class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                    Yes, I'm sure
+                </button>
+                <button id="cancel-comment-delete" type="button"
+                    class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">No,
+                    cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="report-post-modal" tabindex="-1"
     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
@@ -410,6 +468,48 @@
                 <button id="cancel-report" type="button"
                     class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">No,
                     cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Large Modal -->
+<div id="view-post-modal" tabindex="-1" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative w-full max-w-7xl max-h-full">
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-xl font-medium text-gray-900 dark:text-white">
+                    View Post
+                </h3>
+                <button id="view-post-close" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <div class="p-4 md:p-5 space-y-4">
+                <div id="loader" class="flex justify-center">
+                    <div role="status">
+                        <svg aria-hidden="true"
+                            class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                            viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                fill="currentColor" />
+                            <path
+                                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                fill="currentFill" />
+                        </svg>
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+                <div id="post-image-content" class="hidden">
+
+                </div>
             </div>
         </div>
     </div>
@@ -562,7 +662,7 @@
 
                     // Loop through hidden inputs to create previews
                     document.querySelectorAll(`.uploaded-file-${$(element).data('id')}`).forEach(function(
-                    input) {
+                        input) {
                         let mockFile = {
                             name: $(input).data('name')
                         }; // Example file properties
@@ -802,7 +902,8 @@
             });
         }
 
-        function comment(formId) {
+        function postComment(formId) {
+            $(`#comment-btn-${formId}`).prop('disabled', true);
             axios.post($(`#comment-form-${formId}`).data('link'),
                     $(`#comment-form-${formId}`).serialize())
                 .then((response) => {
@@ -814,9 +915,14 @@
                             icon: 'error',
                             text: response.data.message,
                             timer: 5000,
+                            didClose: () => {    
+                                $(`#comment-btn-${formId}`).prop('disabled', false);
+                            }
                         });
                     }
                 }).catch((error) => {
+                    $(`#comment-btn-${formId}`).prop('disabled', false);
+
                     let errMsg = $('<div></div>');
 
                     $.each(error.response.data.errors, function() {
@@ -832,6 +938,132 @@
                         });
                     }
                 });
+        }
+
+        function editComment(commentId, postId) {
+            let comment = $(`#comment-${commentId}`).text();
+            $(`#edit-comment-btn-${commentId}`).text('Editing');
+            $(`#cancel-edit-comment-btn-${commentId}`).removeClass('hidden');
+            $(`#comment-form-${postId}`).find('textarea').val($.trim(comment));
+            $(`#comment-form-${postId}`).find('input[name="comment"]').val(commentId);
+        }
+
+        function cancelEditComment(commentId, postId) {
+            $(`#comment-form-${postId}`).find('textarea').val(null);
+            $(`#comment-form-${postId}`).find('input[name="comment"]').val(null);
+            $(`#edit-comment-btn-${commentId}`).text('Edit');
+            $(`#cancel-edit-comment-btn-${commentId}`).addClass('hidden');
+        }
+
+        function deleteComment(element) {
+            const $delTargetEl = document.querySelector('#delete-comment-modal');
+            const delOptions = {
+                backdrop: 'static',
+                closable: false,
+            };
+            const delInstanceOption = {
+                id: 'delete-comment-modal',
+                override: true
+            };
+            const deleteModal = new Modal($delTargetEl, delOptions, delInstanceOption);
+
+            deleteModal.show();
+
+            $('#delete-comment-form').data('link', $(element).data('link'));
+
+            $('#delete-comment-form').on('submit', (event) => {
+                event.preventDefault();
+                customSwal.fire({
+                    title: 'Deleting comment. Please wait...',
+                    allowOutsideClick: false
+                });
+                customSwal.showLoading();
+                setTimeout(() => {
+                    axios.delete($('#delete-comment-form').data('link'))
+                        .then((response) => {
+                            if (response.data.success) {
+                                customSwal.fire({
+                                    title: 'Success',
+                                    icon: 'success',
+                                    text: response.data.message,
+                                    timer: 5000,
+                                    didClose: () => {
+                                        deleteModal.hide();
+                                        location.reload();
+                                    }
+                                });
+                            } else {
+                                customSwal.fire({
+                                    title: 'Error',
+                                    icon: 'error',
+                                    text: response.data.message,
+                                    timer: 5000,
+                                });
+                            }
+                        }).catch((error) => {
+                            let errMsg = $('<div></div>');
+
+                            $.each(error.response.data.errors, function() {
+                                errMsg.append($(`<p>${$(this)[0]}</p>`));
+                            });
+
+                            if (error.status === 422) {
+                                customSwal.fire({
+                                    title: 'Error',
+                                    icon: 'error',
+                                    html: errMsg,
+                                    timer: 5000,
+                                });
+                            }
+                        });
+                }, 1000);
+            });
+
+            $('#delete-comment-close').on('click', () => {
+                deleteModal.hide();
+            });
+            $('#cancel-comment-delete').on('click', () => {
+                deleteModal.hide();
+            });
+
+        }
+
+        function openPostAttachment(image) {
+            const $viewTargetEl = document.querySelector('#view-post-modal');
+            const viewOptions = {
+                backdrop: 'static',
+                closable: false,
+                onHide: () => {
+                    $('#post-image-content').find('img').remove();
+                }
+            };
+            const viewInstanceOption = {
+                id: 'view-post-modal',
+                override: true
+            };
+            const viewModal = new Modal($viewTargetEl, viewOptions, viewInstanceOption);
+
+            viewModal.show();
+
+            axios.get($(image).data('link'))
+            .then((response) => {
+                if (response.status) {
+                    if (response.data) {
+                        response.data.forEach(element => {
+                            let img = $(`<img src="{{ asset('storage/${element}') }}" alt="Post Image" class="rounded-lg object-cover h-full" />`);
+                            $('#post-image-content').append(img);
+                        });
+                        $('#loader').addClass('hidden');
+                        $('#post-image-content').removeClass('hidden');
+                    }
+                }
+            })
+
+            $('#view-post-close').on('click', () => {
+                viewModal.hide();
+                $('#loader').addClass('hidden');
+                $('#post-image-content').removeClass('hidden');
+            });
         }
     </script>
 @endpush

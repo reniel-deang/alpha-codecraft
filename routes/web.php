@@ -67,9 +67,13 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
         Route::delete('/community/{post}/delete', 'delete')->name('community.post.delete');
         Route::post('/community/{post}/comment', 'comment')->name('community.comment');
 
+        Route::delete('/community/{post}/comment/delete/{comment}', 'deleteComment')->name('community.comment.delete');
+
         Route::post('/community/{post}/report', 'report')->name('community.report');
         Route::post('/temp-upload', 'tempImgUpload')->name('community.temp.img');
         Route::post('/temp-delete', 'tempImgDelete')->name('community.temp.delete');
+
+        Route::get('/community/{post}/get-attachments', 'getAttachments')->name('posts.attachments.view');
     });
 
     Route::controller(ProfileController::class)->group(function() {
@@ -111,6 +115,8 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
         Route::delete('/classes/{class}/post/delete/{post}', 'delete')->can('delete', 'post')->name('classes.post.delete');
 
         Route::post('/classes/{class}/post/{post}/comment', 'comment')->name('classes.post.comment');
+
+        Route::delete('/classes/{class}/post/{post}/comment/delete/{comment}', 'deleteComment')->name('classes.post.comment.delete');
     });
 
     Route::controller(LessonController::class)->group(function () {
