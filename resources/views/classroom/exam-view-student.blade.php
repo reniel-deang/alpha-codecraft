@@ -52,6 +52,51 @@
 
                     if (timeLimit === 0) {
                         $('#time-limit').text('Times up!');
+                        customSwal.fire({
+                            title: 'Submitting answer. Please wait...',
+                            allowOutsideClick: false
+                        });
+                        customSwal.showLoading();
+                        setTimeout(() => {
+                            let form = document.querySelector('#submit-answer-form');
+                            let data = new FormData(form);
+                            axios.post($('#submit-answer-form').data('link'), data)
+                                .then((response) => {
+                                    if (response.data.success) {
+                                        customSwal.fire({
+                                            title: 'Success',
+                                            icon: 'success',
+                                            text: response.data.message,
+                                            timer: 5000,
+                                            didClose: () => {
+                                                location.replace($('#back-button').data('link'));
+                                            }
+                                        });
+                                    } else {
+                                        customSwal.fire({
+                                            title: 'Error',
+                                            icon: 'error',
+                                            text: response.data.message,
+                                            timer: 5000,
+                                        });
+                                    }
+                                }).catch((error) => {
+                                    let errMsg = $('<div></div>');
+
+                                    $.each(error.response.data.errors, function() {
+                                        errMsg.append($(`<p>${$(this)[0]}</p>`));
+                                    });
+
+                                    if (error.status === 422) {
+                                        customSwal.fire({
+                                            title: 'Error',
+                                            icon: 'error',
+                                            html: errMsg,
+                                            timer: 5000,
+                                        });
+                                    }
+                                });
+                        }, 1000);
                     } else {
                         $('#time-limit').text(`${timeLimit} mins`);
                     }
