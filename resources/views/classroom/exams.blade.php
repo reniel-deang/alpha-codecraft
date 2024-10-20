@@ -46,7 +46,7 @@
             </p>
             @if (Auth::user()->user_type === 'Teacher')
                 <p class="absolute left-6 bottom-3 font-normal text-gray-700 dark:text-gray-400">
-                    {{ $lesson->exam()->first()->examQuestions()->first()->answers()->count() }} total submissions
+                    {{ $lesson->exam()->first()->examQuestions()->first()->answers()->count() ?? '0' }} total submissions
                 </p>
             @endif
             @if (Auth::user()->user_type === 'Student')
