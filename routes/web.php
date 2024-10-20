@@ -100,6 +100,7 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
         //Shared
         Route::get('/classes/{class}/posts', 'viewPosts')->can('view', 'class')->name('classes.view');
         Route::get('/classes/{class}/lessons', 'viewLessons')->name('classes.view.lessons');
+        Route::get('/classes/{class}/exams', 'viewExams')->name('classes.view.exams');
         Route::get('/classes/{class}/participants', 'viewParticipants')->name('classes.view.participants');
 
         Route::post('/classes/{class}/invite', 'invite')->name('classes.invite');
@@ -125,8 +126,20 @@ Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
         Route::post('/classes/{class}/lesson/{lesson}/add-section', 'addSection')->name('classes.lesson.add.section');
         Route::post('/classes/{class}/lesson/{lesson}/publish', 'publishLesson')->name('classes.lesson.publish');
 
+        Route::get('/classes/{class}/lesson/{lesson}/create-exam', 'createExam')->name('classes.lesson.exam.create');
+
         Route::get('/classes/{class}/lesson/{lesson}/view-lesson', 'viewLesson')->name('classes.lesson.view.section');
         Route::post('/classes/{class}/lesson/{lesson}/mark-as-done/{section}', 'markAsDone')->name('classes.lesson.section.mark');
+
+        Route::post('/classes/{class}/lesson/{lesson}/save-exam', 'saveExam')->name('classes.lesson.exam.save');
+
+        Route::get('/classes/{class}/lesson/{lesson}/take-exam/{exam}', 'takeExam')->name('classes.lesson.exam.take');
+        Route::post('/classes/{class}/lesson/{lesson}/take-exam/{exam}/submit-answer', 'submitAnswer')->name('classes.lesson.exam.submit.answer');
+
+        Route::get('/classes/{class}/lesson/{lesson}/view-exam/{exam}/submission/{user}', 'viewSubmission')->name('classes.lesson.exam.view.submission');
+
+        Route::post('/classes/{class}/lesson/{lesson}/view-exam/{exam}/submission/{user}/mark-answer/{answer}', 'markAnswer')->name('classes.lesson.exam.mark.answer');
+        Route::post('/classes/{class}/lesson/{lesson}/view-exam/{exam}/submission/{user}/mark-score/{score}', 'markScore')->name('classes.lesson.exam.mark.score');
     });
 
     Route::controller(ClassConferenceController::class)->group(function() {

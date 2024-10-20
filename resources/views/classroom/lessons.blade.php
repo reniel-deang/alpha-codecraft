@@ -53,16 +53,16 @@
                 {{ $lesson->title }}
             </h4>
             @if (Auth::user()->user_type === 'Teacher')
-                <span
-                    class="float-right right-6 absolute top-6 text-sm {{ $lesson->status === 'published' ? 'text-green-500' : 'text-red-500' }}">{{ ucfirst($lesson->status) }}
-                    Lesson</span>
+                <span class="float-right right-6 absolute top-6 text-sm {{ $lesson->status === 'published' ? 'text-green-500' : 'text-red-500' }}">
+                    {{ ucfirst($lesson->status) }} Lesson
+                </span>
             @endif
             <p class="font-normal text-gray-700 dark:text-gray-400 my-3">
                 {{ $lesson->description }}
             </p>
             @if (Auth::user()->user_type === 'Teacher')
                 <p class="absolute left-6 bottom-3 font-normal text-gray-700 dark:text-gray-400">
-                    {{ $lesson->sections()->count() }} sections added / {{ $lesson->sections }} total
+                    {{ $lesson->sections()->count() }} lessons added / {{ $lesson->sections }} total
                 </p>
             @endif
 
@@ -76,19 +76,26 @@
                                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M12 4v16m8-8H4"></path>
                             </svg>
-                            Add Section
+                            Add Lesson
                         </button>
                     @endif
                     @if ($lesson->sections === $lesson->sections()->count())
                         @if ($lesson->status === 'unpublished')
-                            <button onclick="publish({{ $lesson->id }})"
-                                class="inline-block rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-                                Publish Lesson
-                            </button>
-                            <form id="publish-lesson-{{ $lesson->id }}" class="hidden"
-                                data-link="{{ route('classes.lesson.publish', [$class, $lesson]) }}" method="POST">
-                                @csrf
-                            </form>
+                            @if ($lesson->exam()->first())
+                                <button onclick="publish({{ $lesson->id }})"
+                                    class="inline-block rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                    Publish Lesson
+                                </button>
+                                <form id="publish-lesson-{{ $lesson->id }}" class="hidden"
+                                    data-link="{{ route('classes.lesson.publish', [$class, $lesson]) }}" method="POST">
+                                    @csrf
+                                </form>
+                            @else
+                                <a href="{{ route('classes.lesson.exam.create', [$class, $lesson]) }}"
+                                    class="inline-block rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                    Create Exam
+                                </a>
+                            @endif
                         @else
                             <a href="{{ route('classes.lesson.view.section', [$class, $lesson]) }}"
                                 class="inline-block rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
@@ -105,12 +112,12 @@
                         $progress = $lesson->progress()->where('student_id', Auth::user()->id)->first();
                         if ($progress) {
                             $percentage = ($progress?->completed_sections / $lesson->sections) * 100;
-                            $percentage = "{$percentage}%";
+                            $percent = Number::percentage($percentage, maxPrecision: 2);
                         }
                     @endphp
                     <div class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
-                        style="width: {{ $percentage ?? '0%' }}">
-                        {{ $percentage ?? '0%' }}
+                        style="width: {{ $percent ?? '0%' }}">
+                        {{ $percent ?? '0%' }}
                     </div>
                 </div>
 
@@ -120,7 +127,7 @@
                             <a href="{{ route('classes.lesson.view.section', [$class, $lesson]) }}"
                                 class="inline-flex justify-center items-center rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                                 @if ($lesson->progress()->where('student_id', Auth::user()->id)->first())
-                                    @if ($lesson->certificate()->where('student_id', Auth::user()->id)->first())
+                                    @if ($percent === Number::percentage(100, maxPrecision: 2))
                                         View Lesson
                                     @else
                                         Continue
@@ -183,8 +190,8 @@
                     </div>
 
                     <div class="mb-4">
-                        <x-input-label for="sections" :label="__('How many sections will you add')" />
-                        <x-input type="number" id="sections" name="sections" placeholder="Sections count"
+                        <x-input-label for="sections" :label="__('How many lessons will you add')" />
+                        <x-input type="number" id="sections" name="sections" placeholder="Lessons count"
                             :invalid="$errors->has('sections')" required />
                     </div>
 
@@ -221,7 +228,7 @@
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                        Add Section
+                        Add Lesson
                     </h3>
                     <button id="section-close" type="button"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
@@ -238,7 +245,7 @@
                     @csrf
                     <div class="mb-4">
                         <x-input-label for="section_title" :label="__('Title')" />
-                        <x-input id="section_title" name="title" placeholder="Section title" :invalid="$errors->has('title')"
+                        <x-input id="section_title" name="title" placeholder="Lesson title" :invalid="$errors->has('title')"
                             required />
                     </div>
 
@@ -256,7 +263,7 @@
                                     d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
                                     clip-rule="evenodd"></path>
                             </svg>
-                            Save section
+                            Save lesson
                         </button>
                     </div>
                 </form>
@@ -413,7 +420,7 @@
                 customSwal.fire({
                     title: 'Error',
                     icon: 'error',
-                    text: 'Max section count reached! cannot add anymore.',
+                    text: 'Max lesson count reached! cannot add anymore.',
                     allowOutsideClick: false,
                     timer: 3000
                 });
@@ -425,7 +432,7 @@
                 $('#section-form').on('submit', (event) => {
                     event.preventDefault();
                     customSwal.fire({
-                        title: 'Adding section. Please wait...',
+                        title: 'Adding lesson. Please wait...',
                         allowOutsideClick: false
                     });
                     customSwal.showLoading();

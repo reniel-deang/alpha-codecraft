@@ -38,4 +38,9 @@ class Lesson extends Model
     {
         return $this->hasOne(Certificate::class);
     }
+
+    public function exam(): HasOne
+    {
+        return $this->hasOne(Exam::class);
+    }
 }

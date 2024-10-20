@@ -48,6 +48,17 @@ class ClassroomController extends Controller
         return view('classroom.lessons', compact('class', 'students'));
     }
 
+    public function viewExams(Classroom $class)
+    {
+        $students = User::with('studentDetail')
+            ->where('user_type', 'Student')
+            ->whereDoesntHave('enrollments', function (Builder $query) use ($class) {
+                $query->where('classroom_id', $class->id);
+            })->get();
+
+        return view('classroom.exams', compact('class', 'students'));
+    }
+
     public function viewParticipants(Classroom $class)
     {
         $students = User::with('studentDetail')

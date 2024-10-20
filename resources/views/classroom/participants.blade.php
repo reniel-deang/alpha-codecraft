@@ -38,7 +38,7 @@
 </div>
 
 <!-- Container for the layout -->
-<div class="container mx-auto p-6">
+<div class="container mx-auto">
 
     <!-- Teachers Section -->
     <div class="mb-8">

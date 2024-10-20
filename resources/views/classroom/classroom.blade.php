@@ -17,6 +17,11 @@
                         </x-class-nav>
                     </li>
                     <li class="me-2">
+                        <x-class-nav href="{{ route('classes.view.exams', $class) }}" :active="request()->routeIs('classes.view.exams')">
+                            Exams
+                        </x-class-nav>
+                    </li>
+                    <li class="me-2">
                         <x-class-nav href="{{ route('classes.view.participants', $class) }}" :active="request()->routeIs('classes.view.participants')">
                             Participants
                         </x-class-nav>
@@ -52,6 +57,8 @@
                 @yield('posts')
             @elseif (request()->routeIs('classes.view.lessons'))
                 @yield('lessons')
+            @elseif (request()->routeIs('classes.view.exams'))
+                @yield('exams')
             @elseif (request()->routeIs('classes.view.participants'))
                 @yield('participants')
             @endif
@@ -66,6 +73,8 @@
         @yield('posts-modal')
     @elseif (request()->routeIs('classes.view.lessons'))
         @yield('lessons-modal')
+    @elseif (request()->routeIs('classes.view.exams'))
+        @yield('exams-modal')
     @elseif (request()->routeIs('classes.view.participants'))
         @yield('participants-modal')
     @endif
