@@ -97,9 +97,11 @@
         </div>
 
         @if ($user->user_type === 'Teacher')
-            <div class="container mx-auto mt-5 text-gray-700 dark:text-gray-200">
+            <div class="container max-w-4xl mx-auto mt-5 text-gray-700 dark:text-gray-200">
+                
+
                 <div class="flex justify-center items-center mb-6">
-                    <h1 class="text-2xl font-bold">Weekly Schedule</h1>
+                    <h1 class="text-2xl font-bold">Schedule</h1>
                     @if ($user->id === Auth::user()->id)
                         <button onclick="setSchedule(this)" data-link="{{ route('profile.set.schedule', $user) }}"
                             class="ml-auto inline-block rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
@@ -107,7 +109,33 @@
                         </button>
                     @endif
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
+                <div class="flex">
+                    <div id="calendar"></div>
+                    <div id="schedules" data-date="{{ Carbon\Carbon::now()->format('Y-m-d') }}" data-link="{{ route('profile.schedules', $user) }}" class="ml-5 flex justify-center items-center w-full">
+                        <div id="loader" class="flex justify-center">
+                            <div role="status">
+                                <svg aria-hidden="true"
+                                    class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                                    viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                        fill="currentColor" />
+                                    <path
+                                        d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                        fill="currentFill" />
+                                </svg>
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                        <div id="content" class="hidden">
+                            {{-- <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
+                                Available this day {{ Carbon\Carbon::now()->format('F d, Y') }}
+                            </h2> --}}
+                        </div>
+                    </div>
+                </div>
+
+                {{-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
                     @if ($user->teacherDetail?->schedules)
                         @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day)
                             @if (in_array($day, $user->teacherDetail?->schedules))
@@ -136,7 +164,7 @@
                             </div>
                         @endforeach
                     @endif
-                </div>
+                </div> --}}
             </div>
         @endif
 
@@ -259,8 +287,23 @@
                 <!-- Modal body -->
                 <form id="schedule-form" class="p-4 md:p-5" method="POST">
                     @csrf
-
                     <div class="mb-4">
+                        <label for="date"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date</label>
+                        <x-input type="date" id="date" name="date" :invalid="$errors->has('date')" :value="Carbon\Carbon::now()->format('Y-m-d')" />
+                    </div>
+                    <div class="mb-4">
+                        <label for="start_time"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Start Time</label>
+                        <x-input type="time" id="start_time" name="start_time" :invalid="$errors->has('start_time')" />
+                    </div>
+                    <div class="mb-4">
+                        <label for="end_time"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Time</label>
+                        <x-input type="time" id="end_time" name="end_time" :invalid="$errors->has('end_time')" />
+                    </div>
+
+                    {{-- <div class="mb-4">
                         <span class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Set your schedule base on the day you are available.</span>
                     </div>
 
@@ -304,7 +347,7 @@
                         <input id="sunday" type="checkbox" name="schedules[]" value="Sunday" @checked($user->user_type === 'Teacher' && in_array('Sunday', $user->teacherDetail?->schedules)) 
                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                         <label for="sunday" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Sunday</label>
-                    </div>
+                    </div> --}}
 
                     <div class="flex justify-end">
                         <button type="submit"
@@ -322,6 +365,111 @@
             </div>
         </div>
     </div>
+
+    @push('styles')
+        <link href="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro/build/vanilla-calendar.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro/build/vanilla-calendar.min.js" defer></script>
+    @endpush
+
+    @if ($user->user_type === 'Teacher')
+        @push('scripts')
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const calendar = new VanillaCalendar('#calendar', {
+                        settings: {
+                            iso8601: false,
+                        },
+                        actions: {
+                            clickDay(event, self) {
+                                $('#content').addClass('hidden')
+                                $('#loader').removeClass('hidden');
+                                $('#content').children().remove();
+                                let selectedDate = self.selectedDates[0];
+                                axios.get($('#schedules').data('link'), {
+                                    params: {
+                                        date: selectedDate
+                                    }
+                                })
+                                .then((response) => {
+                                    console.log(response);
+                                    if (response.data.length > 0) {
+                                        let h2 = `
+                                            <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
+                                                Available schedule/s for the date ${response.data[0].date}
+                                            </h2>
+                                        `;
+                                        $('#schedules').find('#content').append(h2);
+                                        response.data.forEach((element, index) => {
+                                            let p = `
+                                                <p class="text-gray-700 dark:text-gray-200 leading-relaxed">
+                                                    ${element.start} - ${element.end}
+                                                </p>
+                                            `;
+                                            $('#schedules').find('#content').append(p);
+                                        });
+                                        $('#loader').addClass('hidden');
+                                        $('#content').removeClass('hidden');
+                                    } else {
+                                        let html = `
+                                            <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
+                                                No available schedule/s for this date.
+                                            </h2>
+                                        `;
+                                        $('#schedules').find('#content').append(html);
+                                        $('#loader').addClass('hidden');
+                                        $('#content').removeClass('hidden');
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                })
+                            },
+                        },
+                    });
+                    calendar.init();
+
+                    axios.get($('#schedules').data('link'), {
+                        params: {
+                            date: $('#schedules').data('date')
+                        }
+                    })
+                    .then((response) => {
+                        console.log(response)
+                        if (response.data.length > 0) {
+                            let h2 = `
+                                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
+                                    Available schedule/s for the date ${response.data[0].date}
+                                </h2>
+                            `;
+                            $('#schedules').find('#content').append(h2);
+                            response.data.forEach((element, index) => {
+                                let p = `
+                                    <p class="text-gray-700 dark:text-gray-200 leading-relaxed">
+                                        ${element.start} - ${element.end}
+                                    </p>
+                                `;
+                                $('#schedules').find('#content').append(p);
+                            });
+                            $('#loader').addClass('hidden');
+                            $('#content').removeClass('hidden');
+                        } else {
+                            let html = `
+                                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
+                                    No available schedule/s for this date.
+                                </h2>
+                            `;
+                            $('#schedules').find('#content').append(html);
+                            $('#loader').addClass('hidden');
+                            $('#content').removeClass('hidden');
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
+                });
+            </script>
+        @endpush
+    @endif
 
     @push('scripts')
         <script>

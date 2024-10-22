@@ -126,19 +126,23 @@ class ProfileController extends Controller
     public function setSchedule(Request $request, User $user)
     {
         $schedules = $request->validate([
-            'schedules' => ['required']
+            'date' => ['required'],
+            'start_time' => ['required'],
+            'end_time' => ['required']
         ]);
 
         if ($user->user_type === 'Teacher') {
-            $update = $user->teacherDetail()->update([
-                'schedules' => $schedules['schedules']
-            ]);
+            $action = DB::transaction(function () use ($schedules, $user) {
+                $user->teacherSchedule()->create($schedules);
+
+                return $user;
+            });
         }
 
-        if ($update) {
+        if ($action) {
             return response()->json([
                 'success' => true,
-                'message' => 'Schedules updated successfully.'
+                'message' => 'Schedule successfully set.'
             ]);
         } else {
             return response()->json([
@@ -146,5 +150,26 @@ class ProfileController extends Controller
                 'message' => 'Oops! Something went wrong.'
             ]);
         }
+    }
+
+    public function getSchedules(Request $request, User $user)
+    {
+        $date = $request->input('date');
+        $data = [];
+        if ($user->user_type === 'Teacher') {
+            $schedules = $user->teacherSchedule()->whereDate('date', $date)->get();
+            
+            if ($schedules) {
+                foreach ($schedules as $schedule) {
+                    $data[] = [
+                        'date' => Carbon::parse($schedule->date)->format('F d, Y'),
+                        'start' => Carbon::parse($schedule->start_time)->format('h:i A'),
+                        'end' => Carbon::parse($schedule->end_time)->format('h:i A')
+                    ];
+                } 
+            }
+        } 
+        return response()->json($data);
+
     }
 }
