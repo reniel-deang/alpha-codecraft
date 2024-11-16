@@ -20,10 +20,19 @@ Route::get('/', function () {
     return view('welcome');
 })->middleware('guest');
 
+Route::get('/terms', function () {
+    return view('terms');
+})->middleware('guest')->name('terms');
+
 
 Route::middleware(['auth', 'verified', 'verified.teachers'])->group(function() {
     
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/compiler', function()
+    {
+        return view('shared.compiler');
+    })->name('compiler');
 
     Route::middleware('admin')->group(function() {
         Route::controller(ManageTeachersController::class)->group(function() {
