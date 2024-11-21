@@ -1,70 +1,79 @@
 <x-app-layout>
     <main class="py-8 antialiased md:py-16 md:max-w-screen-xl md:mx-auto">
         <div class="py-8 antialiased md:py-8">
-
-
-            <div
-                class="mb-4 text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
-                <ul class="flex flex-wrap -mb-px">
-                    <li class="me-2">
+    
+            <!-- Navigation Tabs -->
+            <div class="mb-4 text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
+                <ul class="flex flex-wrap justify-center gap-2 -mb-px">
+                    <li>
                         <x-class-nav href="{{ route('classes.view', $class) }}" :active="request()->routeIs('classes.view')">
                             Posts
                         </x-class-nav>
                     </li>
-                    <li class="me-2">
+                    <li>
                         <x-class-nav href="{{ route('classes.view.lessons', $class) }}" :active="request()->routeIs('classes.view.lessons')">
                             Lessons
                         </x-class-nav>
                     </li>
-                    <li class="me-2">
+                    <li>
                         <x-class-nav href="{{ route('classes.view.exams', $class) }}" :active="request()->routeIs('classes.view.exams')">
                             Exams
                         </x-class-nav>
                     </li>
-                    <li class="me-2">
+                    <li>
                         <x-class-nav href="{{ route('classes.view.participants', $class) }}" :active="request()->routeIs('classes.view.participants')">
                             Participants
                         </x-class-nav>
                     </li>
                 </ul>
             </div>
-
-            <div
-                class="relative block max-w-full min-h-48 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                <h4 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+    
+            <!-- Class Card -->
+            <div class="relative block max-w-full min-h-48 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                <!-- Truncate Title -->
+                <h4 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white truncate">
                     {{ $class->name }}
                 </h4>
-                <span class="mb-2 text-lg font-medium tracking-tight text-gray-900 dark:text-white">
+                <!-- Truncate Subject (Single Line) -->
+                <span class="block mb-2 text-lg font-medium tracking-tight text-gray-900 dark:text-white overflow-hidden whitespace-nowrap truncate">
                     {{ $class->subject }}
                 </span>
-                <p class="font-normal text-gray-700 dark:text-gray-400 mt-3">
+                <!-- Truncate Description (Multi-line) -->
+                <p class="font-normal text-gray-700 dark:text-gray-400 mt-3 line-clamp-3 overflow-hidden">
                     {{ $class->description }}
                 </p>
-
-                <div class="{{ Auth::user()->user_type === 'Student' ? 'hidden' : 'absolute' }} right-0 bottom-0 w-1/4">
+    
+                <!-- Buttons Section -->
+                @if (Auth::user()->user_type !== 'Student')
+                <div class="absolute bottom-3 right-3 space-y-2 sm:flex sm:space-y-0 sm:space-x-2">
                     <button data-modal-target="show-code" data-modal-toggle="show-code"
-                        class="mr-3 mb-3 float-right inline-block rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                        class="inline-block rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                         Code
                     </button>
                     <button onclick="inviteStudent(this)" data-link="{{ route('classes.invite', $class) }}"
-                        class="mr-3 mb-3 float-right inline-block rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                        class="inline-block rounded-lg px-5 py-2.5 bg-primary-700 text-center font-medium text-sm text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                         Invite
                     </button>
                 </div>
+                @endif
             </div>
-
-            @if (request()->routeIs('classes.view'))
-                @yield('posts')
-            @elseif (request()->routeIs('classes.view.lessons'))
-                @yield('lessons')
-            @elseif (request()->routeIs('classes.view.exams'))
-                @yield('exams')
-            @elseif (request()->routeIs('classes.view.participants'))
-                @yield('participants')
-            @endif
-
+    
+            <!-- Content Sections -->
+            <div class="mt-8">
+                @if (request()->routeIs('classes.view'))
+                    @yield('posts')
+                @elseif (request()->routeIs('classes.view.lessons'))
+                    @yield('lessons')
+                @elseif (request()->routeIs('classes.view.exams'))
+                    @yield('exams')
+                @elseif (request()->routeIs('classes.view.participants'))
+                    @yield('participants')
+                @endif
+            </div>
+    
         </div>
     </main>
+    
 
 
 
