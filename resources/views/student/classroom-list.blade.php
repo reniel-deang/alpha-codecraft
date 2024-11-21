@@ -14,7 +14,7 @@
                         class="relative flex flex-col justify-between max-w-full h-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-900">
                         <!-- Classroom Title & Dropdown -->
                         <div class="flex justify-between items-start">
-                            <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white break-words">
+                            <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white break-words overflow-hidden text-ellipsis">
                                 {{ $classroom->name }}
                             </h5>
                             <div>
@@ -23,9 +23,9 @@
                                     class="inline-flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5"
                                     type="button">
                                     <span class="sr-only">Open dropdown</span>
-                                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 3">
-                                        <path
-                                            d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
+                                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                        viewBox="0 0 16 3">
+                                        <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
                                     </svg>
                                 </button>
                                 <!-- Dropdown Menu -->
@@ -46,10 +46,10 @@
                         </div>
                         
                         <!-- Classroom Details -->
-                        <h6 class="mb-2 text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+                        <h6 class="mb-2 text-lg font-bold tracking-tight text-gray-900 dark:text-white break-words overflow-hidden text-ellipsis">
                             {{ $classroom->subject }}
                         </h6>
-                        <p class="mb-4 font-normal text-gray-700 dark:text-gray-400 break-words">
+                        <p class="mb-4 font-normal text-gray-700 dark:text-gray-400 break-words overflow-hidden text-ellipsis">
                             {{ $classroom->description }}
                         </p>
     
@@ -68,6 +68,7 @@
             </div>
         </div>
     </section>
+    
     
     @else
         <div class="mx-auto grid max-w-screen-xl px-4 pb-8 md:grid-cols-12 lg:gap-12 lg:pb-16 xl:gap-0">
