@@ -1,69 +1,74 @@
 <div class="py-8 antialiased md:py-16">
     @if ($enrollments->count() > 0)
-        <section class="bg-white dark:bg-gray-900">
+    <section class="bg-white dark:bg-gray-900">
+        <div class="py-4 px-4 mx-auto max-w-screen-xl lg:py-6 lg:px-6">
             <button onclick="joinClass(this)"
-                class="float-right mx-5 my-2 block text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                class="block ml-auto mb-6 text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                 type="button">
                 Join Class
             </button>
-
-            <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    @foreach ($enrollments as $classroom)
-                        <div
-                            class="relative block max-w-sm h-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-900">
-                            <div class="flex justify-start">
-                                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                    {{ $classroom->name }}
-                                </h5>
-                                <div class="ms-auto w-1/4">
-                                    <button id="dropdown-button-{{ $classroom->id }}"
-                                        data-dropdown-toggle="dropdown-{{ $classroom->id }}"
-                                        class="inline-block float-right text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5"
-                                        type="button">
-                                        <span class="sr-only">Open dropdown</span>
-                                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                            fill="currentColor" viewBox="0 0 16 3">
-                                            <path
-                                                d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
-                                        </svg>
-                                    </button>
-                                    <!-- Dropdown menu -->
-                                    <div id="dropdown-{{ $classroom->id }}"
-                                        class="z-10 hidden text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-                                        <ul class="py-2" aria-labelledby="dropdown-button-{{ $classroom->id }}">
-                                            <li>
-                                                <button data-id="{{ $classroom->id }}"
-                                                    data-link="{{ route('classes.leave', $classroom) }}"
-                                                    id="delete-modal-{{ $classroom->id }}" onclick="leaveClass(this)"
-                                                    class="block w-full text-start px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                                                    Leave Class
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </div>
+    
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach ($enrollments as $classroom)
+                    <div
+                        class="relative flex flex-col justify-between max-w-full h-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-900">
+                        <!-- Classroom Title & Dropdown -->
+                        <div class="flex justify-between items-start">
+                            <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white break-words">
+                                {{ $classroom->name }}
+                            </h5>
+                            <div>
+                                <button id="dropdown-button-{{ $classroom->id }}"
+                                    data-dropdown-toggle="dropdown-{{ $classroom->id }}"
+                                    class="inline-flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5"
+                                    type="button">
+                                    <span class="sr-only">Open dropdown</span>
+                                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 3">
+                                        <path
+                                            d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
+                                    </svg>
+                                </button>
+                                <!-- Dropdown Menu -->
+                                <div id="dropdown-{{ $classroom->id }}"
+                                    class="z-10 hidden text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                                    <ul class="py-2" aria-labelledby="dropdown-button-{{ $classroom->id }}">
+                                        <li>
+                                            <button data-id="{{ $classroom->id }}"
+                                                data-link="{{ route('classes.leave', $classroom) }}"
+                                                id="delete-modal-{{ $classroom->id }}" onclick="leaveClass(this)"
+                                                class="block w-full text-start px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                                Leave Class
+                                            </button>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
-                            <h6 class="mb-2 text-lg font-bold tracking-tight text-gray-900 dark:text-white">
-                                {{ $classroom->subject }}
-                            </h6>
-                            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 w-1/2 truncate">
-                                {{ $classroom->description }}
-                            </p>
-                            <a href="{{ route('classes.view', $classroom) }}"
-                                class="absolute mt-24 bottom-0 right-0 m-5 inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                Go to Class
-                                <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
-                                </svg>
-                            </a>
                         </div>
-                    @endforeach
-                </div>
+                        
+                        <!-- Classroom Details -->
+                        <h6 class="mb-2 text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+                            {{ $classroom->subject }}
+                        </h6>
+                        <p class="mb-4 font-normal text-gray-700 dark:text-gray-400 break-words">
+                            {{ $classroom->description }}
+                        </p>
+    
+                        <!-- Go to Class Button -->
+                        <a href="{{ route('classes.view', $classroom) }}"
+                            class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            Go to Class
+                            <svg class="rtl:rotate-180 w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M1 5h12m0 0L9 1m4 4L9 9" />
+                            </svg>
+                        </a>
+                    </div>
+                @endforeach
             </div>
-        </section>
+        </div>
+    </section>
+    
     @else
         <div class="mx-auto grid max-w-screen-xl px-4 pb-8 md:grid-cols-12 lg:gap-12 lg:pb-16 xl:gap-0">
             <div class="content-center justify-self-start md:col-span-7 md:text-start">
