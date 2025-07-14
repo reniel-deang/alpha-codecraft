@@ -1,4 +1,4 @@
-# CodeCraft: Online Platform for Programming Tutorials with Personal Programming Coaches
+# 🧠 Code Craft: Online Platform for Programming Tutorials with Personal Programming Coaches
 
 - <img width="1853" height="964" alt="image" src="https://github.com/user-attachments/assets/b4719090-63c2-42b6-b0ff-415dfe4756ec" />
 
@@ -22,7 +22,7 @@ Code Craft is a **comprehensive e-learning platform** built with Laravel, design
   - <img width="1853" height="964" alt="image" src="https://github.com/user-attachments/assets/c4ae6d16-58ff-4d07-aa43-ce25a6722010" />
 
 
-- 🗣️ **Discussion Forum "Connect" **:  
+- 🗣️ **Discussion forum, Connect!**:  
   - Ask questions, share advice, and help others in a categorized forum system.
  
   - <img width="1853" height="964" alt="image" src="https://github.com/user-attachments/assets/b90bc49b-7c20-4279-bc37-821dcc0db7e4" />
@@ -48,11 +48,10 @@ Code Craft is a **comprehensive e-learning platform** built with Laravel, design
 - **Jitsi Meet** – Secure and scalable video conferencing  
 - **SQLite** – Lightweight development database  
 - **Laravel Seeders** – To populate demo/essential data  
-- (Optional) **Laravel Breeze / Jetstream** for auth scaffolding  
-- (Optional) **Laravel Reverb / Echo / Pusher** for real-time features
+- **Laravel / Pusher** for real-time features
 
 ## 🔓 Open Source and Copyright Notice
 
-Code Craft is an educational platform built for learning and community engagement. This project makes use of several open-source libraries and tools (such as Laravel, Jitsi Meet, and others) that are respected and acknowledged in their respective licenses. All third-party assets, code, and libraries used are credited to their original authors and are used under their corresponding open-source licenses.
+CodeCraft is an educational platform built for learning and community engagement. This project makes use of several open-source libraries and tools (such as Laravel, Jitsi Meet, and others) that are respected and acknowledged in their respective licenses. All third-party assets, code, and libraries used are credited to their original authors and are used under their corresponding open-source licenses.
 
 This project is intended for non-commercial, educational, and developmental use only. If you plan to reuse or distribute any part of this platform, please ensure compliance with the licenses of the included open-source components. We encourage learning, collaboration, and open innovation while respecting the intellectual property of contributors across the open-source community.
