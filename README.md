@@ -1,7 +1,6 @@
 # CodeCraft: Online Platform for Programming Tutorials with Personal Programming Coaches
 
-<img width="1853" height="964" alt="image" src="https://github.com/user-attachments/assets/b4719090-63c2-42b6-b0ff-415dfe4756ec" />
-
+- <img width="1853" height="964" alt="image" src="https://github.com/user-attachments/assets/b4719090-63c2-42b6-b0ff-415dfe4756ec" />
 
 Code Craft is a **comprehensive e-learning platform** built with Laravel, designed to connect aspiring programmers with verified personal programming coaches. It combines the power of social interaction, direct messaging, community discussions, and real-time video conferencing to create a dynamic and immersive online learning environment.
 
@@ -14,27 +13,27 @@ Code Craft is a **comprehensive e-learning platform** built with Laravel, design
 - 📸 **Community Feed**:  
   - Users can post status updates and photos — like a mini social platform!
  
-  - <img width="1851" height="961" alt="image" src="https://github.com/user-attachments/assets/19f90614-d6ae-48fe-85b8-e5b37a619e99" />
+  - <img width="1853" height="964" alt="image" src="https://github.com/user-attachments/assets/19f90614-d6ae-48fe-85b8-e5b37a619e99" />
 
 
 - 💬 **Built-in Messenger powered by Chatify**:  
   - Real-time private messaging system to connect with other users.
  
-  - <img width="1862" height="959" alt="image" src="https://github.com/user-attachments/assets/c4ae6d16-58ff-4d07-aa43-ce25a6722010" />
+  - <img width="1853" height="964" alt="image" src="https://github.com/user-attachments/assets/c4ae6d16-58ff-4d07-aa43-ce25a6722010" />
 
 
 - 🗣️ **Discussion Forum "Connect" **:  
   - Ask questions, share advice, and help others in a categorized forum system.
  
-  - <img width="1869" height="794" alt="image" src="https://github.com/user-attachments/assets/b90bc49b-7c20-4279-bc37-821dcc0db7e4" />
+  - <img width="1853" height="964" alt="image" src="https://github.com/user-attachments/assets/b90bc49b-7c20-4279-bc37-821dcc0db7e4" />
 
 
 - 🧑‍🏫 **Find a Teacher**:  
   - Find suitable personal programming coaches and manage your class as a teacher .
  
-  - <img width="1865" height="964" alt="image" src="https://github.com/user-attachments/assets/f3cdfd57-7837-40ac-9e88-b76394faa405" />
+  - <img width="1853" height="964" alt="image" src="https://github.com/user-attachments/assets/f3cdfd57-7837-40ac-9e88-b76394faa405" />
 
-  <img width="1869" height="961" alt="image" src="https://github.com/user-attachments/assets/4c740439-28a7-48a9-ac95-3069a3bd97d0" />
+  - <img width="1853" height="964" alt="image" src="https://github.com/user-attachments/assets/4c740439-28a7-48a9-ac95-3069a3bd97d0" />
 
 
 - 🎥 **Video Conferencing**:  
