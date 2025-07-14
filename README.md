@@ -1,4 +1,4 @@
-# 🧠 Code Craft: Online Platform for Programming Tutorials with Personal Programming Coaches
+# CodeCraft: Online Platform for Programming Tutorials with Personal Programming Coaches
 
 <img width="1853" height="964" alt="image" src="https://github.com/user-attachments/assets/b4719090-63c2-42b6-b0ff-415dfe4756ec" />
 
