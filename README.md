@@ -1,4 +1,4 @@
-# 🧠 Code Craft: Online Platform for Programming Tutorials with Personal Programming Coaches
+# Code Craft: Online Platform for Programming Tutorials with Personal Programming Coaches
 
 <img width="100%" alt="code-craft-banner" src="https://github.com/user-attachments/assets/b4719090-63c2-42b6-b0ff-415dfe4756ec" />
 
@@ -6,16 +6,16 @@
 
 ---
 
-## 🚀 Features
+##  Features
 
-### 👥 Two User Roles
+###  Two User Roles
 
 - **Students** can explore content, find teachers, post statuses, and interact in the community.  
 - **Teachers** must be verified before accepting students and teaching.
 
 ---
 
-### 📸 Community Feed
+###  Community Feed
 
 Users can post status updates and photos — like a mini social platform!
 
@@ -23,7 +23,7 @@ Users can post status updates and photos — like a mini social platform!
 
 ---
 
-### 💬 Built-in Messenger (Chatify)
+###  Built-in Messenger (Chatify)
 
 Real-time private messaging system to connect with other users.
 
@@ -31,7 +31,7 @@ Real-time private messaging system to connect with other users.
 
 ---
 
-### 🗣️ Discussion Forum
+###  Discussion Forum
 
 Ask questions, share advice, and help others in a categorized forum system.
 
@@ -39,7 +39,7 @@ Ask questions, share advice, and help others in a categorized forum system.
 
 ---
 
-### 🧑‍🏫 Find a Teacher
+###  Find a Teacher
 
 Find suitable personal programming coaches and manage your class as a teacher.
 
@@ -50,19 +50,19 @@ Find suitable personal programming coaches and manage your class as a teacher.
 
 ---
 
-### 🎥 Video Conferencing
+###  Video Conferencing
 
 Seamless integration with **Jitsi Meet** for live 1-on-1 or group sessions.
 
 ---
 
-### 🧪 SQLite Database with Seeders
+###  SQLite Database with Seeders
 
 Easily set up the platform with essential data using Laravel seeders.
 
 ---
 
-## 🛠️ Built With
+##  Built With
 
 - **Laravel** – PHP framework for robust backend development  
 - **Jitsi Meet** – Secure and scalable video conferencing  
@@ -72,7 +72,7 @@ Easily set up the platform with essential data using Laravel seeders.
 
 ---
 
-## 🔓 Open Source and Copyright Notice
+##  Open Source and Copyright Notice
 
 **CodeCraft** is an educational platform built for learning and community engagement. This project makes use of several open-source libraries and tools (such as Laravel, Jitsi Meet, and others) that are respected and acknowledged in their respective licenses.
 
